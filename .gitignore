@@ -1,0 +1,5 @@
+.vscode
+.env
+yarn.lock
+dist
+node_modules
