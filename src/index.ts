@@ -1,5 +1,5 @@
 require('dotenv').config();
-import {Bot} from "./bot";
+import { Bot } from "./bot";
 
 let bot = new Bot();
 bot.listen().then(() => {
