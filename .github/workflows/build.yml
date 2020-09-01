@@ -35,3 +35,5 @@ jobs:
       run: npm run coverage-upload
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Test run build
+      run: npm run build
