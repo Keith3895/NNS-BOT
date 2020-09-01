@@ -12,6 +12,10 @@ export class Bot {
 
   public listen(): Promise<string> {
     this.client.on('message', (message: Message) => {
+      if (message.author.bot) {
+        console.log('Ignoring bot message!')
+        return;
+      }
       console.log("Message received! Contents: ", message.content);
       this.messageHandler.handle(message).then(() => {
         console.log("Response sent!");
