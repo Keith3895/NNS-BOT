@@ -1,18 +1,17 @@
-import {Message} from "discord.js";
-import {PingHandler} from './pingHandler';
+import { Message } from "discord.js";
+import { PingHandler } from './pingHandler';
 
 export class MessageHandler {
-  private pingHandler: PingHandler;
+    private pingHandler: PingHandler;
 
-  constructor() {
-    this.pingHandler = new PingHandler;
-  }
-
-  handle(message: Message): Promise<Message | Message[]> {
-    if (this.pingHandler.isPing(message.content)) {
-      return message.reply('pong!');
+    constructor(pingHandler: PingHandler = new PingHandler()) {
+        this.pingHandler = pingHandler;
     }
 
-    return Promise.reject();
-  }
+    handle(message: Message): Promise<Message | Message[]> {
+        if (this.pingHandler.isPing(message.content)) {
+            return message.reply('pong!');
+        }
+        return Promise.reject();
+    }
 }

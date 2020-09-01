@@ -1,0 +1,39 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Build
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master,setup/tests]
+  pull_request:
+    branches: [ master,staging/* ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    # Runs a single command using the runners shell
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v1.4.2
+      with:
+        # Version Spec of the version to use.  Examples: 10.x, 10.15.1, >=10.15.0
+        node-version: 12.x
+    # Runs a set of commands using the runners shell
+    - name: Initialize environment
+      run: npm install
+    - name: Upload coverage report
+      run: npm run coverage-upload
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Test run build
+      run: npm run build
