@@ -11,7 +11,7 @@ A discord bot to raise Jira support tickets.
 2) [Installation](#Installation)
 3) [Usage Guide](#Usage)
 4) [License](#License)
-5) [Road Map](#Road\ Map)
+5) [Road Map](#RoadMap)
 
 ### Introduction
 
@@ -31,10 +31,10 @@ GNU General Public License v3.0 or later
 
 See [COPYING](./LICENSE) file to see the full text.
 
-### Road Map
+### RoadMap
 
 The Road Map of this project is to:
-- [ ] build the bot on TypeScript.
+- [x] build the bot on TypeScript.
 - [ ] Follow TDD.
 - [ ] have a complete and a functional CI/CD.
 - [ ] Integrate a NLP to improve the conversational capacity of the bot.
