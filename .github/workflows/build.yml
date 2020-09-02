@@ -35,6 +35,10 @@ jobs:
       run: npm run coverage-upload
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Run codacy-coverage-reporter-action
+      uses: codacy/codacy-coverage-reporter-action@master
+      with:
+        project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
     - name: Run codacy-coverage-reporter
       run: bash <(curl -Ls https://coverage.codacy.com/get.sh)
       env:
