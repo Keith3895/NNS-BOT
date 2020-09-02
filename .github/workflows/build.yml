@@ -6,7 +6,7 @@ name: Build
 # events but only for the master branch
 on:
   push:
-    branches: [ master,setup/tests]
+    branches: [ master,setup/*]
   pull_request:
     branches: [ master,staging/* ]
 
@@ -35,5 +35,12 @@ jobs:
       run: npm run coverage-upload
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Run codacy-coverage-reporter
+      uses: codacy/codacy-coverage-reporter-action@master
+      with:
+        project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        coverage-reports: ../../coverage/cobertura-coverage.xml
     - name: Test run build
       run: npm run build
+      
+     
