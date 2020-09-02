@@ -39,7 +39,7 @@ jobs:
       uses: codacy/codacy-coverage-reporter-action@master
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-        coverage-reports: ../../coverage/cobertura-coverage.xml
+        coverage-reports: cobertura-coverage.xml
     - name: Test run build
       run: npm run build
       
