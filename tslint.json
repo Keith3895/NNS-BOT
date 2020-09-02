@@ -1,0 +1,85 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "no-console": {
+            "severity": "warning",
+            "options": [
+                "debug",
+                "info",
+                "log",
+                "time",
+                "timeEnd",
+                "trace"
+            ]
+        },
+        "prefer-const": false,
+        "no-string-literal": false,
+        "comment-format": [
+            true,
+            "check-space"
+        ],
+        "deprecation": {
+            "severity": "warn"
+        },
+        "eofline": true,
+        "forin": false,
+        "no-debugger": true,
+        "no-duplicate-super": true,
+        "no-empty": [
+            true,
+            "allow-empty-catch"
+        ],
+        "no-redundant-jsdoc": true,
+        "no-shadowed-variable": true,
+        "no-string-throw": true,
+        "no-switch-case-fall-through": true,
+        "no-trailing-whitespace": true,
+        "no-unnecessary-initializer": true,
+        "no-unused-expression": true,
+        "no-use-before-declare": true,
+        "no-var-keyword": true,
+        "object-literal-sort-keys": false,
+        "quotemark": [
+            true,
+            "single"
+        ],
+        "radix": true,
+        "semicolon": [
+            true,
+            "always"
+        ],
+        "triple-equals": [
+            true,
+            "allow-null-check"
+        ],
+        "variable-name": false,
+        "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-separator",
+            "check-type"
+        ],
+        "no-duplicate-switch-case": true,
+        "no-duplicate-variable": [
+            true,
+            "check-parameters"
+        ],
+        "no-this-assignment": [
+            true,
+            {
+                "allowed-names": [
+                    "^self$"
+                ],
+                "allow-destructuring": true
+            }
+        ],
+        "use-isnan": true
+    },
+    "rulesDirectory": []
+}
