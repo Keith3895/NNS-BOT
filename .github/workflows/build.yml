@@ -6,15 +6,15 @@ name: Build
 # events but only for the master branch
 on:
   push:
-    branches: [ master,setup/*]
+    branches: [ master]
   pull_request:
     branches: [ master,staging/* ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  my_first_job:
-    name: My first job
+  Run_build_and_tests:
+    name: Run build and tests
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -42,12 +42,3 @@ jobs:
         CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
     - name: Test run build
       run: npm run build && ls
-  
-  my_second_job:
-    name: My second job
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      - name: test ls
-        run: ls -a
