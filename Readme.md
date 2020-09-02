@@ -19,6 +19,8 @@ The purpose of this program is to create a Bot on discord that will respond to t
 
 The Plan is to build the bot on TypeScript using discord's dependencies. The bot would receive messages and trigger various flows based on the commands/chats it receives.
 
+The Basic flow or sequence of events will be:
+![flow](./docs/BotFlow.png)
 ### Installation
 - have NodeJS (lts) installed.
 - run ``npm install`` or ``yarn`` to install all the dependencies.
