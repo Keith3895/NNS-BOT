@@ -10,7 +10,7 @@
     "build": "tsc -p tsconfig.json",
     "test": "mocha -r ts-node/register \"tests/**/*.spec.ts\"",
     "coverage": "nyc npm run test",
-    "coverage-upload": "nyc --reporter=lcov npm test && codecov"
+    "coverage-upload": "nyc --reporter=lcov --reporter=cobertura npm test && codecov"
   },
   "repository": {
     "type": "git",

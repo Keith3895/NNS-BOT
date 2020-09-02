@@ -6,14 +6,15 @@ name: Build
 # events but only for the master branch
 on:
   push:
-    branches: [ master,setup/tests]
+    branches: [ master]
   pull_request:
     branches: [ master,staging/* ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  test:
+  Run_build_and_tests:
+    name: Run build and tests
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -35,5 +36,9 @@ jobs:
       run: npm run coverage-upload
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Run codacy-coverage-reporter
+      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) final
+      env:
+        CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
     - name: Test run build
-      run: npm run build
+      run: npm run build && ls
