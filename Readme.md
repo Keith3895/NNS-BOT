@@ -22,7 +22,7 @@ The Plan is to build the bot on TypeScript using discord's dependencies. The bot
 ### Installation
 - have NodeJS (lts) installed.
 - run ``npm install`` or ``yarn`` to install all the dependencies.
-
+- create a ``.env`` file on the apps root directory. [.env template](./docs/.env)
 ### Usage
 - for development run ``npm run watch`` or ``yarn watch`` followed by ``npm start`` or ``yarn start``
 
