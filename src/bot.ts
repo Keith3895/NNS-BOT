@@ -1,4 +1,4 @@
-import { Client, Message } from "discord.js";
+import { Client, Message } from 'discord.js';
 import { MessageHandler } from './service/messageHandler';
 export class Bot {
   private client: Client;
@@ -13,14 +13,14 @@ export class Bot {
   public listen(): Promise<string> {
     this.client.on('message', (message: Message) => {
       if (message.author.bot) {
-        console.log('Ignoring bot message!')
+        console.log('Ignoring bot message!');
         return;
       }
-      console.log("Message received! Contents: ", message);
+      console.log('Message received! Contents: ', message);
       this.messageHandler.handle(message).then(() => {
-        console.log("Response sent!");
+        console.log('Response sent!');
       }).catch(() => {
-        console.log("Response not sent.")
+        console.log('Response not sent.');
       });
     });
 
