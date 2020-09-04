@@ -8,13 +8,13 @@ export class HelpCommand {
     Display all commands and descriptions
     `;
     execute(message, args, prefix = message.client.prefix, commands = message.client.commands) {
-        let helpEmbed = new MessageEmbed();
+        const helpEmbed = new MessageEmbed();
         helpEmbed.setTitle('nns-bot Help')
             .setColor('#F8AA2A')
             .setTimestamp();
         if (args) {
             args = args[0].replace(prefix, '');
-            let cmdAsArg = commands.get(args);
+            const cmdAsArg = commands.get(args);
             if (cmdAsArg && cmdAsArg.name !== this.name) {
                 helpEmbed.addField(
                     `**${prefix}${cmdAsArg.name} ${cmdAsArg.aliases ? `(${cmdAsArg.aliases})` : ''}**`,

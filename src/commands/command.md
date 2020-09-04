@@ -1,4 +1,4 @@
-#### steps to add commands.
+#### Steps to add commands
 
 1) ##### create a file with the code for the command.
     the class must have the following members:

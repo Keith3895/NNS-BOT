@@ -11,9 +11,9 @@ export const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '
  * @param command the command for which the args are extracted.
  */
 export function cmdArgsParser(content: string, prefix: string, command: string) {
-    let prefixRegex = new RegExp(`^(${escapeRegex(prefix + command)})\\s*`);
+    const prefixRegex = new RegExp(`^(${escapeRegex(prefix + command)})\\s*`);
     if (!prefixRegex.test(content)) return;
-    let [, matchedPrefix] = content.match(prefixRegex);
-    let args = content.slice(matchedPrefix.length).trim();
+    const [, matchedPrefix] = content.match(prefixRegex);
+    const args = content.slice(matchedPrefix.length).trim();
     return args;
 }

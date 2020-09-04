@@ -26,8 +26,8 @@ export class Bot {
     this.initCommands();
   }
 
-  private initCommands() {
-    let cmdList = this.commandHandler.commandLoader();
+  private initCommands(){
+    const cmdList = this.commandHandler.commandLoader();
     if (!cmdList) return [];
     cmdList.forEach(cmdInst => {
       this.client['commands'].set(cmdInst.name || 'cmd', cmdInst);
@@ -59,14 +59,14 @@ export class Bot {
       /**
        * the following block is to ignore quotes.
        */
-      let botID = this.client.user ? this.client.user.id : '';
-      let prefixRegex = new RegExp(`^(<@!?${botID}>|${escapeRegex(this.PREFIX)})\\s*`);
+      const botID = this.client.user ? this.client.user.id : '';
+      const prefixRegex = new RegExp(`^(<@!?${botID}>|${escapeRegex(this.PREFIX)})\\s*`);
       if (!prefixRegex.test(message.content)) return 'quote or not a command.';
 
-      let [, matchedPrefix] = message.content.match(prefixRegex);
-      let args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
-      let commandName = args.shift().toLowerCase();
-      let command = this.client['commands'].get(commandName); // write a finder method
+      const [, matchedPrefix] = message.content.match(prefixRegex);
+      const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
+      const commandName = args.shift().toLowerCase();
+      const command = this.client['commands'].get(commandName); // write a finder method
       if (!command)
         return 'not a command.';
       try {
