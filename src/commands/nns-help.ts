@@ -12,7 +12,7 @@ export class HelpCommand {
         helpEmbed.setTitle('nns-bot Help')
             .setColor('#F8AA2A')
             .setTimestamp();
-        if (args) {
+        if (args && args.length > 0) {
             args = args[0].replace(prefix, '');
             const cmdAsArg = commands.get(args);
             if (cmdAsArg && cmdAsArg.name !== this.name) {
