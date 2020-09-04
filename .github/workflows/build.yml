@@ -23,6 +23,11 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
+    - name: Seting environment variables for testing
+      run: echo the values are $TOKEN $PREFIX
+      env:
+        TOKEN: token_value
+        PREFIX: "!nns."
     # Runs a single command using the runners shell
     - name: Setup Node.js environment
       uses: actions/setup-node@v1.4.2
