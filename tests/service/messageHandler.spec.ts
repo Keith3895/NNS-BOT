@@ -1,10 +1,10 @@
 
 import 'mocha';
 import {expect} from 'chai';
-import {PingHandler} from "../src/service/pingHandler";
-import {MessageHandler} from "../src/service/messageHandler";
-import {instance, mock, verify, when} from "ts-mockito";
-import {Message} from "discord.js";
+import {PingHandler} from '../../src/service/pingHandler';
+import {MessageHandler} from '../../src/service/messageHandler';
+import {instance, mock, verify, when} from 'ts-mockito';
+import {Message} from 'discord.js';
 
 describe('MessageHandler', () => {
   let mockedPingHandlerClass: PingHandler;
@@ -44,10 +44,10 @@ describe('MessageHandler', () => {
   })
 
   function setMessageContents() {
-    mockedMessageInstance.content = "Non-empty string";
+    mockedMessageInstance.content = 'Non-empty string';
   }
 
   function whenIsPingThenReturn(result: boolean) {
-    when(mockedPingHandlerClass.isPing("Non-empty string")).thenReturn(result);
+    when(mockedPingHandlerClass.isPing('Non-empty string')).thenReturn(result);
   }
 });

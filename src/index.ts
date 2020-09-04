@@ -1,6 +1,4 @@
-// require('dotenv').config();
 import { config } from 'dotenv';
-// dotenv.config()
 config();
 import { Bot } from './bot';
 

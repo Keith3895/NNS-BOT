@@ -7,31 +7,41 @@ export class HelpCommand {
     readonly description: string = `
     Display all commands and descriptions
     `;
-    execute(message) {
-        let args = cmdArgsParser(message.content, message.client.prefix, this.name);
+    execute(message, args, prefix = message.client.prefix, commands = message.client.commands) {
         let helpEmbed = new MessageEmbed();
-        let commands = message.client.commands;
         helpEmbed.setTitle('nns-bot Help')
-            .setColor('#F8AA2A');
-        args = args.replace(message.client.prefix, '');
-        let cmdAsArg = message.client.commands.get(args);
-        if (args && cmdAsArg && cmdAsArg.name !== this.name) {
-            helpEmbed.addField(
-                `**${message.client.prefix}${cmdAsArg.name} ${cmdAsArg.aliases ? `(${cmdAsArg.aliases})` : ''}**`,
-                `${cmdAsArg.man}`,
-                true
-            );
-        } else {
-            helpEmbed.setDescription('List of all commands');
-            commands.forEach((cmd) => {
+            .setColor('#F8AA2A')
+            .setTimestamp();
+        if (args) {
+            args = args[0].replace(prefix, '');
+            let cmdAsArg = commands.get(args);
+            if (cmdAsArg && cmdAsArg.name !== this.name) {
                 helpEmbed.addField(
-                    `**${message.client.prefix}${cmd.name} ${cmd.aliases ? `(${cmd.aliases})` : ''}**`,
-                    `${cmd.description}`,
+                    `**${prefix}${cmdAsArg.name} ${cmdAsArg.aliases ? `(${cmdAsArg.aliases})` : ''}**`,
+                    `${cmdAsArg.man}`,
                     true
                 );
-            });
+                try {
+                    message.channel.send(helpEmbed);
+                } catch (e) {
+                    console.error(e);
+                }
+                return helpEmbed;
+            }
         }
-        helpEmbed.setTimestamp();
-        return message.channel.send(helpEmbed).catch(console.error);
+        helpEmbed.setDescription('List of all commands');
+        commands.forEach((cmd) => {
+            helpEmbed.addField(
+                `**${prefix}${cmd.name} ${cmd.aliases ? `(${cmd.aliases})` : ''}**`,
+                `${cmd.description}`,
+                true
+            );
+        });
+        try {
+            message.channel.send(helpEmbed);
+        } catch (e) {
+            console.error(e);
+        }
+        return helpEmbed;
     }
 }
