@@ -15,8 +15,8 @@ describe('MessageHandler', () => {
     let guild: Guild;
     let channel: TextChannel;
     let command: HelpCommand;
-    let commandsList = new Map();
     let mckTextChannel;
+    const commandsList = new Map();
     beforeEach(() => {
         client = new Client();
         client['prefix'] = process.env.PREFIX;
@@ -32,7 +32,7 @@ describe('MessageHandler', () => {
     });
     it('help without arguments', () => {
         mockedMessageInstance.content = '!nns.help';
-        let helpEmbed = new MessageEmbed({
+        const helpEmbed = new MessageEmbed({
             type: undefined,
             title: 'nns-bot Help',
             description: 'List of all commands',
@@ -49,14 +49,14 @@ describe('MessageHandler', () => {
         });
         when(mckTextChannel.send(helpEmbed)).thenResolve();
         mockedMessageInstance.channel.send({});
-        let returnVal = command.execute(mockedMessageInstance, null, client['prefix'], commandsList);
+        const returnVal = command.execute(mockedMessageInstance, null, client['prefix'], commandsList);
         delete returnVal.timestamp;
         delete helpEmbed.timestamp;
         expect(returnVal).to.deep.equal(helpEmbed);
     });
     it('help with arguments', () => {
         mockedMessageInstance.content = '!nns.help';
-        let helpEmbed = new MessageEmbed({
+        const helpEmbed = new MessageEmbed({
             type: undefined,
             title: 'nns-bot Help',
             url: undefined,
@@ -72,7 +72,7 @@ describe('MessageHandler', () => {
         });
         when(mckTextChannel.send(helpEmbed)).thenResolve();
         mockedMessageInstance.channel.send({});
-        let returnVal = command.execute(mockedMessageInstance, ['!nns.test'], client['prefix'], commandsList);
+        const returnVal = command.execute(mockedMessageInstance, ['!nns.test'], client['prefix'], commandsList);
         delete returnVal.timestamp;
         delete helpEmbed.timestamp;
         expect(returnVal).to.deep.equal(helpEmbed);

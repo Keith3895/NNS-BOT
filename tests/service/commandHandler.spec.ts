@@ -4,7 +4,7 @@ import CommandHandler from '../../src/service/commandHandler';
 
 describe('Command Handler', () => {
     it('command list', () => {
-        let cmdInst = new CommandHandler();
+        const cmdInst = new CommandHandler();
         expect(cmdInst.commandLoader()).to.be.an('array');
     });
 });
