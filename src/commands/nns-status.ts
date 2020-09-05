@@ -32,7 +32,7 @@ export class StatusCommand {
                     console.error(e);
                 }
                 return helpEmbed;
-            })
+            }).catch(e => console.error(e))
         }
 
     }
