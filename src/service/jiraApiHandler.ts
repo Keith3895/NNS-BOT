@@ -13,7 +13,7 @@ export default class Jira {
      * 
      * @param ticket accepts the ticket number along with project key(MO-1)
      */
-    getTicketStatus = async (ticket: any) => {
+    getTicketStatus = async (ticket: string) => {
         let url = `https://${this.host}/rest/api/3/issue/${ticket}`;
         let headers = {
             'Authorization': `Basic ${Buffer.from(
@@ -30,7 +30,5 @@ export default class Jira {
             console.error(error);
             return error;
         }
-
-
     }
 }

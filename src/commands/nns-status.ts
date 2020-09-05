@@ -5,7 +5,6 @@ export class StatusCommand {
     readonly name: string = 'status';
     readonly alias: string = 'status';
     private jiraApiHandler: Jira;
-
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
     }
