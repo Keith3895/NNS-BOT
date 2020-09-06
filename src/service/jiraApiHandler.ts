@@ -25,7 +25,7 @@ export default class Jira {
         try {
             let issueSummary = await fetch(url, { method: 'GET', headers: headers });
             let response = await issueSummary.json();
-            return response.fields;
+            return response;
         } catch (error) {
             console.error(error);
             return error;

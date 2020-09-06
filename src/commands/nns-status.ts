@@ -10,21 +10,29 @@ export class StatusCommand {
     }
     execute(message, args, prefix = message.client.prefix, commands = message.client.commands) {
         const helpEmbed = new MessageEmbed();
+        helpEmbed.type = 'rich';
         if (args && args.length > 0) {
-            args = args[0].replace(prefix, '');
+            args = args[0].replace(prefix, ''); /**Processes only the first word */
             const cmdAsArg = commands.get(args);
             this.jiraApiHandler.getTicketStatus(args).then(status => {
-                helpEmbed.setColor('#8B0000')
-                    .setTitle(`${status.project.name}`)
-                    .setURL(`${status.project.self}`)
-                    .setDescription(`${status.summary}`)
-                    .addFields(
-                        { name: 'Assignee', value: `${status.assignee.displayName}`, inline: true },
-                        { name: 'Reporter', value: `${status.reporter.displayName}`, inline: true },
-                        { name: 'Status', value: `${status.status.name}` }
-                    )
-                    .setTimestamp()
-
+                if (status && status.hasOwnProperty('errorMessages')) {
+                    helpEmbed.setColor('#FF0000')
+                        .setTitle(`Invalid Ticket or Permission is denied!`)
+                        .setDescription(`${status.errorMessages[0]}`)
+                        .setTimestamp();
+                }
+                if (status && status.hasOwnProperty('fields')) {
+                    helpEmbed.setColor('#00ff00')
+                        .setTitle(`${status.fields.project.name}`)
+                        .setURL(`${status.fields.project.self}`)
+                        .setDescription(`${status.fields.summary}`)
+                        .setTimestamp();
+                    helpEmbed.addField('Assignee', status.fields.assignee ? `${status.fields.assignee.displayName}` : 'Not Assigned', true);
+                    if (status.fields.reporter && status.fields.reporter.hasOwnProperty('displayName')) {
+                        helpEmbed.addField('Reporter', `${status.fields.reporter.displayName}`, true);
+                    }
+                    helpEmbed.addField('Status', `${status.fields.status.name}`, false);
+                }
                 try {
                     message.channel.send(helpEmbed);
                 } catch (e) {
