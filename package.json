@@ -1,16 +1,16 @@
 {
   "name": "nns-bot",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "A discord bot to support with raising tickets and feature requests for Neutrions Studio.",
   "main": "index.js",
   "scripts": {
-    "prestart": "npm run build",
     "start": "node dist/index.js",
     "lint": "tslint -p tsconfig.json",
     "watch": "ts-node-dev --inspect --respawn ./src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "prepublishOnly": "npm run build",
-    "publish": "docker build -t nns-bot .",
+    "precontainerize": "npm run build",
+    "containerize": "docker build -t nns-bot/$npm_package_version .",
+    "postcontainerize": "sed 's/{{version}}/'$npm_package_version'/' docker-compose.template.yml > docker-compose.yml",
     "test": "mocha --exit -r ts-node/register \"tests/**/*.spec.ts\"",
     "coverage": "nyc npm run test",
     "coverage-upload": "nyc --reporter=lcov --reporter=cobertura npm test && codecov"
@@ -37,14 +37,14 @@
     }
   ],
   "dependencies": {
-    "@types/node": "^14.6.2",
-    "codecov": "^3.7.2",
     "discord.js": "^12.3.1",
-    "dotenv": "^8.2.0",
-    "ts-node-dev": "^1.0.0-pre.61",
-    "typescript": "^4.0.2"
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "codecov": "^3.7.2",
+    "@types/node": "^14.6.2",
+    "ts-node-dev": "^1.0.0-pre.61",
+    "typescript": "^4.0.2",
     "@types/chai": "^4.2.12",
     "@types/mocha": "^8.0.3",
     "chai": "^4.2.0",

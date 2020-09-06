@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  bot:
+    image: nns-bot/{{version}}
+    environment:
+      - TOKEN=
+      - PREFIX=!nns.
+    deploy:
+      restart_policy:
+        condition: on-failure
