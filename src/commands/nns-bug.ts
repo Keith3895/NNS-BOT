@@ -1,7 +1,4 @@
 import { MessageEmbed, Message } from 'discord.js';
-import { cmdArgsParser } from '../service/utils';
-import { resolve } from 'path';
-import { rejects } from 'assert';
 
 export class BugCommand {
     // constructor(){}
@@ -10,17 +7,17 @@ export class BugCommand {
     execute(message: Message) {
 
         const filter = m => m.author.id === message.author.id;
-        let msg_1 = `Please enter the bug title in 10 seconds ...!`;
-        let msg_2 = `Please enter the bug description ..!`;
-        let msg_3 = `Please enter bug severity ..!`;
-        let msg_4 = 'Please confirm the above bug . Reply Yes , if ok , else No';
+        let mes = ['Please enter the bug title in 10 seconds ...!',
+            'Please enter the bug description ..!',
+            'Please enter bug severity ..!',
+            'Please confirm the above bug . Reply Yes , if ok , else No'];
+        let iterator = 1;
+        message.reply('Please enter the bug title in 10 seconds ...!');
+        this.initaiteCollector(filter, message, mes, 10000, iterator).then(res => {
+            console.log(res);
+        });
 
-        let res_1 = this.initaiteCollector(filter, message, msg_1, 2000, this.ramdon);
-        let res_2 = this.initaiteCollector(filter, message, msg_2, 2000, this.ramdon);
-        let res_3 = this.initaiteCollector(filter, message, msg_3, 2000, this.ramdon);
-        let res_4 = this.initaiteCollector(filter, message, msg_4, 2000, this.ramdon);
 
-        // message.reply('Please enter the bug title in 10 seconds ...!');
         // return msg_1;
         // let bugObject = {
         //     name: '',
@@ -81,21 +78,38 @@ export class BugCommand {
 
 
     }
+    private initaiteCollector(filter, message: Message, replyContent: string[], timeout: number, iterator, bug = {}) {
+        return this.awaitMessenger(filter, message, replyContent, timeout, iterator).then(res => {
+            let keys = ['title', 'description', 'severity'];
+            bug[keys[iterator - 1]] = res['collected'].first().content;
+            iterator++;
+            if (res['done'])
+                return bug;
+            else
+                return this.initaiteCollector(filter, message, replyContent, 10000, iterator, bug);
+        }).catch(e => {
+            console.warn(e);
+        });
 
-    private ramdon(arg1) {
-        return arg1;
     }
-    private initaiteCollector(filter, message: Message, replyContent: string, timeout: number, fn1?) {
-        
-        message.channel.awaitMessages(filter, {
-            max: 1,
-            time: timeout
-        }).then(collected => {
-            message.reply(replyContent);
-            if (fn1)
-                fn1(collected.first().content);
-            return collected.first().content;
-        }).catch(err => {
+    awaitMessenger(filter, message: Message, replyContent: string[], timeout: number, iterator) {
+        return new Promise((resolve, reject) => {
+            message.channel.awaitMessages(filter, {
+                max: 1,
+                time: timeout
+            }).then(collected => {
+                if (!collected.first())
+                    throw new Error('here');
+                message.reply(replyContent[iterator]);
+                // return collected.first().content;
+                let resp = { 'collected': collected };
+                if (iterator === 3)
+                    resp['done'] = true;
+                resolve(resp);
+            }).catch(err => {
+                message.channel.send('no response');
+                reject(err);
+            });
         });
     }
 }
