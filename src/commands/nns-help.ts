@@ -1,5 +1,4 @@
 import { MessageEmbed } from 'discord.js';
-import { cmdArgsParser } from '../service/utils';
 export class HelpCommand {
     // constructor(){}
     readonly name: string = 'help';
