@@ -11,53 +11,49 @@ export class StatusCommand {
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
     }
-    execute(message, args, prefix = message.client.prefix, commands = message.client.commands) {
+    async execute(message, args, prefix = message.client.prefix, commands = message.client.commands) {
         const helpEmbed = new MessageEmbed();
+        let jiraResponse;
         helpEmbed.type = 'rich';
         if (args && args.length > 0) {
 
-            this.jiraApiHandler.getTicketStatus(args[0]).then((status) => {
-                if (status && status.hasOwnProperty('errorMessages')) {
+            try {
+                jiraResponse = await this.jiraApiHandler.getTicketStatus('MO-109');
+                if (jiraResponse.hasOwnProperty('errorMessages')) {
                     helpEmbed.setColor('#FF0000')
                         .setTitle(`Invalid Ticket or Permission is denied!`)
-                        .setDescription(`${status['errorMessages'][0]}`)
+                        .setDescription(`${jiraResponse['errorMessages'][0]}`)
                         .setTimestamp();
                 }
-                if (status && status.hasOwnProperty('fields')) {
+                if (jiraResponse && jiraResponse.hasOwnProperty('fields')) {
                     helpEmbed.setColor('#00ff00')
-                        .setTitle(`${status['fields'].project.name}`)
-                        .setURL(`${status['fields'].project.self}`)
-                        .setDescription(`${status['fields'].summary}`)
+                        .setTitle(`${jiraResponse['fields'].project.name}`)
+                        .setURL(`${jiraResponse['fields'].project.self}`)
+                        .setDescription(`${jiraResponse['fields'].summary}`)
                         .setTimestamp();
-                    helpEmbed.addField('Assignee', status['fields'].assignee ? `${status['fields'].assignee.displayName}` : 'Not Assigned', true);
-                    if (status['fields'].reporter && status['fields'].reporter.hasOwnProperty('displayName')) {
-                        helpEmbed.addField('Reporter', `${status['fields'].reporter.displayName}`, true);
+                    helpEmbed.addField('Assignee', jiraResponse['fields'].assignee ? `${jiraResponse['fields'].assignee.displayName}` : 'Not Assigned', true);
+                    if (jiraResponse['fields'].reporter && jiraResponse['fields'].reporter.hasOwnProperty('displayName')) {
+                        helpEmbed.addField('Reporter', `${jiraResponse['fields'].reporter.displayName}`, true);
                     }
-                    helpEmbed.addField('Status', `${status['fields'].status.name}`, false);
-                }
-                try {
+                    helpEmbed.addField('Status', `${jiraResponse['fields'].status.name}`, false);
                     message.channel.send(helpEmbed);
-                } catch (e) {
-                    console.error(e);
+
                 }
                 return helpEmbed;
-            }).catch(e => {
-                console.error(e);
-
-            });
-        }
-        else {
-            helpEmbed.setColor('#F8AA2A')
-                .setTitle('nns-bot Status')
-                .setDescription('Supported Command')
-                .addField('!nns.status <<JiraTicketReference>>', 'Displays the status of the entered JIRA Ticket.', true)
-                .setTimestamp();
-            try {
-                message.channel.send(helpEmbed);
             } catch (e) {
-                console.error(e);
+                return 'Error in Responding';
             }
-            return helpEmbed;
         }
+        helpEmbed.setColor('#F8AA2A')
+            .setTitle('nns-bot Status')
+            .setDescription('Supported Command')
+            .addField('!nns.status <<JiraTicketReference>>', 'Displays the status of the entered JIRA Ticket.', true)
+            .setTimestamp();
+        try {
+            message.channel.send(helpEmbed);
+        } catch (e) {
+            console.error(e);
+        }
+        return helpEmbed;
     }
 }

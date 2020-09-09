@@ -39,8 +39,8 @@ describe('JIRA API Handler', () => {
             console.warn(error);
             done();
         });
-
     });
+
 });
 
 
