@@ -5,7 +5,6 @@ import { expect } from 'chai';
 import { Client, TextChannel, Message, MessageEmbed, NewsChannel } from 'discord.js';
 import { instance, mock, verify, when, spy } from 'ts-mockito';
 import { StatusCommand } from '../../src/commands';
-import sinon, { stubInterface } from "ts-sinon"
 import Jira from '../../src/service/jiraApiHandler';
 
 

@@ -6,8 +6,7 @@ export class StatusCommand {
     readonly alias: string = 'status';
     readonly description: string = `Key in !nns.status <JIRATICKET> to get status`;
     readonly man: string = `
-    Displays the status of the entered JIRA Ticket. 
-    `;
+    Displays the status of the entered JIRA Ticket.`;
     private jiraApiHandler: Jira;
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
@@ -16,26 +15,25 @@ export class StatusCommand {
         const helpEmbed = new MessageEmbed();
         helpEmbed.type = 'rich';
         if (args && args.length > 0) {
-            args = args[0].replace(prefix, ''); /**Processes only the first word */
-            this.jiraApiHandler.getTicketStatus(args).then(status => {
-                console.log(status)
+            args = args[0].replace(prefix, '');
+            this.jiraApiHandler.getTicketStatus(args).then((status) => {
                 if (status && status.hasOwnProperty('errorMessages')) {
                     helpEmbed.setColor('#FF0000')
                         .setTitle(`Invalid Ticket or Permission is denied!`)
-                        .setDescription(`${status.errorMessages[0]}`)
+                        .setDescription(`${status['errorMessages'][0]}`)
                         .setTimestamp();
                 }
                 if (status && status.hasOwnProperty('fields')) {
                     helpEmbed.setColor('#00ff00')
-                        .setTitle(`${status.fields.project.name}`)
-                        .setURL(`${status.fields.project.self}`)
-                        .setDescription(`${status.fields.summary}`)
+                        .setTitle(`${status['fields'].project.name}`)
+                        .setURL(`${status['fields'].project.self}`)
+                        .setDescription(`${status['fields'].summary}`)
                         .setTimestamp();
-                    helpEmbed.addField('Assignee', status.fields.assignee ? `${status.fields.assignee.displayName}` : 'Not Assigned', true);
-                    if (status.fields.reporter && status.fields.reporter.hasOwnProperty('displayName')) {
-                        helpEmbed.addField('Reporter', `${status.fields.reporter.displayName}`, true);
+                    helpEmbed.addField('Assignee', status['fields'].assignee ? `${status['fields'].assignee.displayName}` : 'Not Assigned', true);
+                    if (status['fields'].reporter && status['fields'].reporter.hasOwnProperty('displayName')) {
+                        helpEmbed.addField('Reporter', `${status['fields'].reporter.displayName}`, true);
                     }
-                    helpEmbed.addField('Status', `${status.fields.status.name}`, false);
+                    helpEmbed.addField('Status', `${status['fields'].status.name}`, false);
                 }
                 try {
                     message.channel.send(helpEmbed);
@@ -46,7 +44,7 @@ export class StatusCommand {
             }).catch(e => {
                 console.error(e);
 
-            })
+            });
         }
         else {
             helpEmbed.setColor('#F8AA2A')
@@ -61,10 +59,5 @@ export class StatusCommand {
             }
             return helpEmbed;
         }
-
-
     }
-
-
-
 }
