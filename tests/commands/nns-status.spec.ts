@@ -41,7 +41,7 @@ describe('StatusCommandHandler', () => {
 
         const helpEmbed = new MessageEmbed({
             type: 'rich',
-            title: 'nns-bot Status',
+            title: 'JIRA Ticket Status',
             description: 'Supported Command',
             color: 16296490,
             fields: [{ name: '!nns.status <TicketRef>', value: 'Displays the status of the entered JIRA Ticket.', inline: true }],

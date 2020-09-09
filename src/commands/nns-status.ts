@@ -49,7 +49,7 @@ export class StatusCommand {
             }
         }
         helpEmbed.setColor('#F8AA2A')
-            .setTitle('nns-bot Status')
+            .setTitle('JIRA Ticket Status')
             .setDescription('Supported Command')
             .addField('!nns.status <TicketRef>', 'Displays the status of the entered JIRA Ticket.', true)
             .setTimestamp();
