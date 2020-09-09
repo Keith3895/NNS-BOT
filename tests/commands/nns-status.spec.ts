@@ -37,32 +37,29 @@ describe('StatusCommandHandler', () => {
     afterEach(() => {
         sandbox.restore();
     });
-    it('status without arguments', () => {
+    it('status without arguments', async () => {
 
-        // mockedMessageInstance.content = '!nns.status';
-        // const helpEmbed = new MessageEmbed({
-        //     type: 'rich',
-        //     title: 'nns-bot Status',
-        //     description: 'Supported Command',
-        //     color: 16296490,
-        //     fields: [{ name: '!nns.status <<JiraTicketReference>>', value: 'Displays the status of the entered JIRA Ticket.', inline: true }],
-        //     thumbnail: null,
-        //     image: null,
-        //     video: null,
-        //     author: null,
-        //     provider: null,
-        //     footer: null,
-        //     files: []
-        // });
-        // when(mckTextChannel.send(helpEmbed)).thenResolve();
-        // mockedMessageInstance.channel.send({});
-        // const returnVal = command.execute(mockedMessageInstance, null, client['prefix'], commandsList);
-        // delete returnVal.timestamp;
-        // delete helpEmbed.timestamp;
-        // expect(returnVal).to.deep.equal(helpEmbed);
+        const helpEmbed = new MessageEmbed({
+            type: 'rich',
+            title: 'nns-bot Status',
+            description: 'Supported Command',
+            color: 16296490,
+            fields: [{ name: '!nns.status <TicketRef>', value: 'Displays the status of the entered JIRA Ticket.', inline: true }],
+            thumbnail: null,
+            image: null,
+            video: null,
+            author: null,
+            provider: null,
+            footer: null,
+            files: []
+        });
+        const returnVal = await command.execute(mockedMessageInstance, null, client['prefix'], commandsList);
+        delete returnVal['timestamp'];
+        delete helpEmbed.timestamp;
+        expect(returnVal).to.deep.equal(helpEmbed);
     });
 
-    it.only('status with valid ticket', (done) => {
+    it('status with valid ticket', async () => {
         const helpEmbed = new MessageEmbed({
             type: 'rich',
             title: 'MPIG_OMNI',
@@ -83,21 +80,34 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        mockStub.withArgs('MO-49').resolves(mockResponse.validTicket);
-        // when(mckTextChannel.send(helpEmbed)).thenResolve();
-        // mockedMessageInstance.channel.send({});
-        command.execute(mockedMessageInstance, ['MO-49'], client['prefix'], null).then((status) => {
-            expect(status).to.equals(helpEmbed);
-            done();
-        }).catch(error => {
-            done();
-        });
-
-
-
-
+        mockStub.withArgs('MO-109').resolves(mockResponse.validTicket);
+        let returnVal = await command.execute(mockedMessageInstance, ['MO-109'], client['prefix'], null);
+        delete returnVal['timestamp'];
+        delete helpEmbed.timestamp;
+        expect(returnVal).to.deep.equals(helpEmbed);
     });
 
-
-
+    it('status with invalid ticket', async () => {
+        const helpEmbed = new MessageEmbed({
+            type: 'rich',
+            title: 'Invalid Ticket or Permission is denied!',
+            description: 'Issue does not exist or you do not have permission to see it.',
+            url: undefined,
+            color: 16711680,
+            timestamp: 1599675103957,
+            fields: [],
+            thumbnail: null,
+            image: null,
+            video: null,
+            author: null,
+            provider: null,
+            footer: null,
+            files: []
+        });
+        mockStub.withArgs('ABC').resolves(mockResponse.validTicket);
+        let returnVal = await command.execute(mockedMessageInstance, ['ABC'], client['prefix'], null);
+        delete returnVal['timestamp'];
+        delete helpEmbed.timestamp;
+        expect(returnVal).to.deep.equals(helpEmbed);
+    });
 });

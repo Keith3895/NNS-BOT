@@ -18,8 +18,8 @@ export class StatusCommand {
         if (args && args.length > 0) {
 
             try {
-                jiraResponse = await this.jiraApiHandler.getTicketStatus('MO-109');
-                if (jiraResponse.hasOwnProperty('errorMessages')) {
+                jiraResponse = await this.jiraApiHandler.getTicketStatus(args[0]);
+                if (jiraResponse && jiraResponse.hasOwnProperty('errorMessages')) {
                     helpEmbed.setColor('#FF0000')
                         .setTitle(`Invalid Ticket or Permission is denied!`)
                         .setDescription(`${jiraResponse['errorMessages'][0]}`)
@@ -36,18 +36,22 @@ export class StatusCommand {
                         helpEmbed.addField('Reporter', `${jiraResponse['fields'].reporter.displayName}`, true);
                     }
                     helpEmbed.addField('Status', `${jiraResponse['fields'].status.name}`, false);
+                }
+                try {
                     message.channel.send(helpEmbed);
-
+                }
+                catch (e) {
+                    console.error(e);
                 }
                 return helpEmbed;
             } catch (e) {
-                return 'Error in Responding';
+                console.error(e);
             }
         }
         helpEmbed.setColor('#F8AA2A')
             .setTitle('nns-bot Status')
             .setDescription('Supported Command')
-            .addField('!nns.status <<JiraTicketReference>>', 'Displays the status of the entered JIRA Ticket.', true)
+            .addField('!nns.status <TicketRef>', 'Displays the status of the entered JIRA Ticket.', true)
             .setTimestamp();
         try {
             message.channel.send(helpEmbed);
