@@ -18,11 +18,12 @@ export class StatusCommand {
 
             try {
                 jiraResponse = await this.jiraApiHandler.getTicketStatus(args[0]);
+
                 if (jiraResponse && jiraResponse.hasOwnProperty('errorMessages')) {
                     helpEmbed.setColor('#FF0000')
                         .setTitle(`Invalid Ticket or Permission is denied!`)
                         .setDescription(`${jiraResponse['errorMessages'][0]}`)
-                        .setTimestamp();
+                .setTimestamp();
                 }
                 if (jiraResponse && jiraResponse.hasOwnProperty('fields')) {
                     helpEmbed.setColor('#00ff00')

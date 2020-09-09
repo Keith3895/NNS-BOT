@@ -67,10 +67,10 @@ describe('StatusCommandHandler', () => {
         const helpEmbed = new MessageEmbed({
             type: 'rich',
             title: 'MPIG_OMNI',
-            description: 'Travel Single',
+            description: 'Touh ID popup',
             url: 'https://jatahworx.atlassian.net/rest/api/3/project/10345',
             color: 65280,
-            timestamp: 1599666808903,
+            timestamp: 1599679091820,
             fields: [
                 { name: 'Assignee', value: 'Not Assigned', inline: true },
                 { name: 'Reporter', value: 'Mudassar Ahamed', inline: true },
@@ -84,8 +84,8 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        mockStub.withArgs('MO-109').resolves(mockResponse.validTicket);
-        const returnVal = await command.execute(mockedMessageInstance, ['MO-109'], client['prefix'], null);
+        mockStub.withArgs('MO-49').resolves(mockResponse.validTicket);
+        const returnVal = await command.execute(mockedMessageInstance, ['MO-49'], client['prefix'], null);
         delete returnVal['timestamp'];
         delete helpEmbed.timestamp;
         expect(returnVal).to.deep.equals(helpEmbed);
@@ -108,7 +108,7 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        mockStub.withArgs('ABC').resolves(mockResponse.validTicket);
+        mockStub.withArgs('ABC').resolves(mockResponse.invalidTicket);
         const returnVal = await command.execute(mockedMessageInstance, ['ABC'], client['prefix'], null);
         delete returnVal['timestamp'];
         delete helpEmbed.timestamp;
