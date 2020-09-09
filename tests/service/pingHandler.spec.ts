@@ -15,3 +15,4 @@ describe('PingHandler', () => {
     expect(service.isPing('!help')).to.be.false;
   });
 });
+
