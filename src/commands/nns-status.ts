@@ -51,7 +51,6 @@ export class StatusCommand {
                 console.error(e);
             }
         }
-        else {
             helpEmbed.setColor('#F8AA2A')
                 .setTitle('JIRA Ticket Status')
                 .setDescription('Supported Command')
@@ -63,7 +62,7 @@ export class StatusCommand {
                 console.error(e);
             }
             return helpEmbed;
-        }
+        
 
     }
 }
