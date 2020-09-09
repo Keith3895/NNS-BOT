@@ -11,7 +11,7 @@ import MockResponse from '../mocks/jiraResponse.mock';
 describe('JIRA API Handler', () => {
     let jira: Jira;
     let mockResponse: MockResponse;
-    let sandbox = sinon.createSandbox();
+    const sandbox = sinon.createSandbox();
     let mockStub;
     beforeEach(() => {
         mockResponse = new MockResponse();

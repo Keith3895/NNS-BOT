@@ -5,8 +5,7 @@ export class StatusCommand {
     readonly name: string = 'status';
     readonly alias: string = 'status';
     readonly description: string = `Key in !nns.status <JIRATICKET> to get status`;
-    readonly man: string = `
-    Displays the status of the entered JIRA Ticket.`;
+    readonly man: string = `Displays the status of the entered JIRA Ticket.`;
     private jiraApiHandler: Jira;
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
