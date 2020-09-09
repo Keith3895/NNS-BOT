@@ -25,13 +25,12 @@ describe('JIRA API Handler', () => {
 
     it('Jira Status API with Ticket', (done) => {
         jira.getTicketStatus('MO-49').then(response => {
-            expect(response).to.have.property('errors');
+            expect(response).to.have.property('fields');
             done();
         }).catch(done);
 
     });
-
-    it.only('Calling Fetch API', (done) => {
+    it('Calling Fetch API', (done) => {
         let options = {
             'url': `https://jatahworx.atlassian.net/rest/api/3/issue/MO-49`,
             'headers': {
@@ -42,7 +41,7 @@ describe('JIRA API Handler', () => {
             }
         };
         request.get(options, (err, res, body) => {
-            expect(body).to.deep.equals(mockResponse.validTicket);
+            expect(body).to.have.property('fields');
             done();
         });
     });
