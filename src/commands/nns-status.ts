@@ -15,8 +15,8 @@ export class StatusCommand {
         const helpEmbed = new MessageEmbed();
         helpEmbed.type = 'rich';
         if (args && args.length > 0) {
-            args = args[0].replace(prefix, '');
-            this.jiraApiHandler.getTicketStatus(args).then((status) => {
+
+            this.jiraApiHandler.getTicketStatus(args[0]).then((status) => {
                 if (status && status.hasOwnProperty('errorMessages')) {
                     helpEmbed.setColor('#FF0000')
                         .setTitle(`Invalid Ticket or Permission is denied!`)
