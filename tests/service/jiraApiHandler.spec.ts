@@ -32,12 +32,10 @@ describe('JIRA API Handler', () => {
     });
     it('Calling Fetch API', (done) => {
         let options = {
-            'url': `https://jatahworx.atlassian.net/rest/api/3/issue/MO-49`,
-            'headers': {
-                'Authorization': `Basic ${Buffer.from(
-                    `shashank.hegde@neutrinos.co:RAAwkwbMqn0a9SqueiFo50A0`
-                ).toString('base64')}`,
-                'Accept': 'application/json'
+            url: 'https://jatahworx.atlassian.net/rest/api/3/issue/MO-57',
+            headers: {
+                Authorization: 'Basic c2hhc2hhbmsuaGVnZGVAbmV1dHJpbm9zLmNvOlJBQXdrd2JNcW4wYTlTcXVlaUZvNTBBMA==',
+                Accept: 'application/json'
             }
         };
         request.get(options, (err, res, body) => {

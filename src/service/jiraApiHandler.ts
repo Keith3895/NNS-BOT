@@ -16,9 +16,7 @@ export default class Jira {
         const options = {
             'url': `https://${this.host}/rest/api/3/issue/${ticket}`,
             'headers': {
-                'Authorization': `Basic ${Buffer.from(
-                    `shashank.hegde@neutrinos.co:${this.api_token}`
-                ).toString('base64')}`,
+                'Authorization': 'Basic c2hhc2hhbmsuaGVnZGVAbmV1dHJpbm9zLmNvOlJBQXdrd2JNcW4wYTlTcXVlaUZvNTBBMA==',
                 'Accept': 'application/json'
             }
         };
