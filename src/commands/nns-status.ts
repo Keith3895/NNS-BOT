@@ -23,7 +23,7 @@ export class StatusCommand {
                     helpEmbed.setColor('#FF0000')
                         .setTitle(`Invalid Ticket or Permission is denied!`)
                         .setDescription(`${jiraResponse['errorMessages'][0]}`)
-                .setTimestamp();
+                        .setTimestamp();
                 }
                 if (jiraResponse && jiraResponse.hasOwnProperty('fields')) {
                     helpEmbed.setColor('#00ff00')
@@ -51,16 +51,19 @@ export class StatusCommand {
                 console.error(e);
             }
         }
-        helpEmbed.setColor('#F8AA2A')
-            .setTitle('JIRA Ticket Status')
-            .setDescription('Supported Command')
-            .addField('!nns.status <TicketRef>', 'Displays the status of the entered JIRA Ticket.', true)
-            .setTimestamp();
-        try {
-            message.channel.send(helpEmbed);
-        } catch (e) {
-            console.error(e);
+        else {
+            helpEmbed.setColor('#F8AA2A')
+                .setTitle('JIRA Ticket Status')
+                .setDescription('Supported Command')
+                .addField('!nns.status <TicketRef>', 'Displays the status of the entered JIRA Ticket.', true)
+                .setTimestamp();
+            try {
+                message.channel.send(helpEmbed);
+            } catch (e) {
+                console.error(e);
+            }
+            return helpEmbed;
         }
-        return helpEmbed;
+
     }
 }
