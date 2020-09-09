@@ -30,8 +30,11 @@ export class StatusCommand {
                         .setURL(`${jiraResponse['fields'].project.self}`)
                         .setDescription(`${jiraResponse['fields'].summary}`)
                         .setTimestamp();
-                    helpEmbed.addField('Assignee', jiraResponse['fields'].assignee ? `${jiraResponse['fields'].assignee.displayName}` : 'Not Assigned', true);
-                    if (jiraResponse['fields'].reporter && jiraResponse['fields'].reporter.hasOwnProperty('displayName')) {
+                    helpEmbed.addField('Assignee', jiraResponse['fields'].assignee
+                        ? `${jiraResponse['fields'].assignee.displayName}`
+                        : 'Not Assigned', true);
+                    if (jiraResponse['fields'].reporter
+                        && jiraResponse['fields'].reporter.hasOwnProperty('displayName')) {
                         helpEmbed.addField('Reporter', `${jiraResponse['fields'].reporter.displayName}`, true);
                     }
                     helpEmbed.addField('Status', `${jiraResponse['fields'].status.name}`, false);

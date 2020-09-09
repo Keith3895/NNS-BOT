@@ -20,7 +20,7 @@ describe('StatusCommandHandler', () => {
     let client: Client;
     let command: StatusCommand;
     let jira: Jira;
-    let sandbox = sinon.createSandbox();
+    const sandbox = sinon.createSandbox();
     let mockStub;
     let mckTextChannel;
     const commandsList = new Map();
@@ -44,7 +44,11 @@ describe('StatusCommandHandler', () => {
             title: 'JIRA Ticket Status',
             description: 'Supported Command',
             color: 16296490,
-            fields: [{ name: '!nns.status <TicketRef>', value: 'Displays the status of the entered JIRA Ticket.', inline: true }],
+            fields: [{
+                name: '!nns.status <TicketRef>',
+                value: 'Displays the status of the entered JIRA Ticket.',
+                inline: true
+            }],
             thumbnail: null,
             image: null,
             video: null,
