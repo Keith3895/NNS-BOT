@@ -2,10 +2,12 @@ import * as request from 'request';
 
 export default class Jira {
     private readonly host: string;
+    private readonly jiraAuth: string;
 
 
     constructor() {
         this.host = process.env.JIRA_HOST;
+        this.jiraAuth = process.env.JIRA_AUTH;
 
     }
     /**
@@ -15,7 +17,7 @@ export default class Jira {
         const options = {
             'url': `https://${this.host}/rest/api/3/issue/${ticket}`,
             'headers': {
-                'Authorization': process.env.JIRA_AUTH,
+                'Authorization': this.jiraAuth,
                 'Accept': 'application/json'
             }
         };
