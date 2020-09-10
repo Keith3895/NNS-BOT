@@ -1,13 +1,16 @@
 {
   "name": "nns-bot",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A discord bot to support with raising tickets and feature requests for Neutrions Studio.",
   "main": "index.js",
   "scripts": {
+    "prestart": "npm run build",
     "start": "node dist/index.js",
     "lint": "tslint -p tsconfig.json",
     "watch": "ts-node-dev --inspect --respawn ./src/index.ts",
     "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build",
+    "publish": "docker build -t nns-bot .",
     "test": "mocha --exit -r ts-node/register \"tests/**/*.spec.ts\"",
     "coverage": "nyc npm run test",
     "coverage-upload": "nyc --reporter=lcov --reporter=cobertura npm test && codecov"
@@ -48,6 +51,8 @@
     "chai": "^4.2.0",
     "mocha": "^8.1.3",
     "nyc": "^15.1.0",
+    "request": "^2.88.2",
+    "sinon": "^9.0.3",
     "ts-mockito": "^2.6.1",
     "ts-node": "^9.0.0",
     "tslint": "^6.1.3"
