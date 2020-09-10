@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 config();
 import 'mocha';
 import { expect } from 'chai';
-import { Client, TextChannel, Message, MessageEmbed, NewsChannel } from 'discord.js';
+import { Client, TextChannel, Message, MessageEmbed} from 'discord.js';
 import { instance, mock} from 'ts-mockito';
 import { StatusCommand } from '../../src/commands';
 import Jira from '../../src/service/jiraApiHandler';
