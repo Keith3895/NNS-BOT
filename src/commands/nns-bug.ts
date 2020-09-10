@@ -14,7 +14,7 @@ export class BugCommand {
         let iterator = 1;
         message.reply('Please enter the bug title in 10 seconds ...!');
         return this.initaiteCollector(filter, message, bugQueries, 10000, iterator).then(res => {
-            console.log(res);
+            // console.log(res);
             return res;
         }).catch(err => {
             return err;
@@ -22,7 +22,7 @@ export class BugCommand {
 
     }
 
-    private initaiteCollector(filter, message: Message, replyContent: string[], timeout: number, iterator, bug = {}) {
+    public initaiteCollector(filter, message: Message, replyContent: string[], timeout: number, iterator, bug = {}) {
         return this.awaitMessenger(filter, message, replyContent, timeout, iterator).then(res => {
             let keys = ['title', 'description', 'severity', 'confirm'];
             bug[keys[iterator - 1]] = res['collected'].first().content;
@@ -36,28 +36,23 @@ export class BugCommand {
             return new Error(e);
         });
     }
-    awaitMessenger(filter, message: Message, replyContent: string[], timeout: number, iterator) {
+
+
+    public awaitMessenger(filter, message: Message, replyContent: string[], timeout: number, iterator) {
         return new Promise((resolve, reject) => {
             message.channel.awaitMessages(filter, {
                 max: 1,
                 time: timeout
             }).then(collected => {
-                if (!collected.first())
-                    throw new Error('here');
-                message.reply(replyContent[iterator] || 'EndDDDD');
+                message.reply(replyContent[iterator]);
                 let resp = { 'collected': collected };
                 if (iterator === 4)
                     resp['done'] = true;
                 resolve(resp);
             }).catch(err => {
-                message.channel.send('no response');
+                message.channel.send('Oops. Please retry from start');
                 reject(err);
             });
         });
-    }
-
-    test(ab){
-        ab = ab + 12
-        return ab;
     }
 }
