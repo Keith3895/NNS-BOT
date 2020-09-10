@@ -7,6 +7,7 @@ import { instance, mock, verify, when, spy } from 'ts-mockito';
 import { BugCommand } from '../../src/commands';
 import CommandHandler from '../../src/service/commandHandler';
 import 'sinon';
+
 describe('Bug Creation Handler', () => {
     let client: Client;
     let bugCommand: BugCommand;
@@ -35,12 +36,35 @@ describe('Bug Creation Handler', () => {
         mockedMessageInstance['author'] = new User(mockedClientInstance, { bot: false, id: 'test' });
     });
 
-    it.only('Bug Commant Initiate', async() => {
+    it.only('Bug Command Initiate : Success', async(done) => {
+        let bug = new BugCommand;
+        const bugObject = {
+            title: 'Date Picker',
+            description: 'Format Incorrect',
+            severity: 'High',
+            confirm: 'Yes'
+        }
+        mockedMessageInstance.content = '!nns.bug';
+        mockedMessageInstance.reply('Please enter the bug title in 10 seconds ...!');
+        sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
+        let res = bug.execute(mockedMessageInstance).then(res=>{
+            expect(res['title']).to.equal('Date Picker');
+            expect(res['description']).to.equal('Format Incorrect');
+            expect(res['severity']).to.equal('High');
+            expect(res['confirm']).to.equal('Yes');
+        });
+        done();
+    });
+
+    it.only('Bug Command Initiate : Failure', (done) => {
         let bug = new BugCommand;
         mockedMessageInstance.content = '!nns.bug';
-        // sinon.stub(bug , 'execute').callsFake(()=>  Promise.resolve([]));
-        let returnVal = bug.execute(mockedMessageInstance);
-        console.log(returnVal);
+        sinon.stub(bug, 'initaiteCollector').returns(Promise.reject(new Error('Initiate Failed')));
+        bug.execute(mockedMessageInstance).catch(err => {
+            expect(err['message']).to.equal('Initiate Failed');
+        });
+        done();
     });
+
 
 });
