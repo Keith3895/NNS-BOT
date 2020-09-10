@@ -51,18 +51,16 @@ export class StatusCommand {
                 console.error(e);
             }
         }
-            helpEmbed.setColor('#F8AA2A')
-                .setTitle('JIRA Ticket Status')
-                .setDescription('Supported Command')
-                .addField('!nns.status <TicketRef>', 'Displays the status of the entered JIRA Ticket.', true)
-                .setTimestamp();
-            try {
-                message.channel.send(helpEmbed);
-            } catch (e) {
-                console.error(e);
-            }
-            return helpEmbed;
-        
-
+        helpEmbed.setColor('#F8AA2A')
+            .setTitle('JIRA Ticket Status')
+            .setDescription('Supported Command')
+            .addField('!nns.status <TicketRef>', 'Displays the status of the entered JIRA Ticket.', true)
+            .setTimestamp();
+        try {
+            message.channel.send(helpEmbed);
+        } catch (e) {
+            console.error(e);
+        }
+        return helpEmbed;
     }
 }

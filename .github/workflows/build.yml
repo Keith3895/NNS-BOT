@@ -20,6 +20,8 @@ jobs:
     env:
       TOKEN: token_value
       PREFIX: "!nns."
+      JIRA_HOST: host_name
+      JIRA_AUTH: jira_auth
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
