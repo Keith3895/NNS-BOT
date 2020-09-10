@@ -1,4 +1,4 @@
-import { MessageEmbed, Message } from 'discord.js';
+import { Message } from 'discord.js';
 
 export class BugCommand {
     // constructor(){}
@@ -18,7 +18,7 @@ export class BugCommand {
             return res;
         }).catch(err => {
             return err;
-        })
+        });
 
     }
 
@@ -44,10 +44,12 @@ export class BugCommand {
                 max: 1,
                 time: timeout
             }).then(collected => {
-                message.reply(replyContent[iterator]);
                 let resp = { 'collected': collected };
-                if (iterator === 4)
+                if (iterator === 4){
                     resp['done'] = true;
+                    replyContent.push('Bug creation initiated');
+                }
+                message.reply(replyContent[iterator]);
                 resolve(resp);
             }).catch(err => {
                 message.channel.send('Oops. Please retry from start');
