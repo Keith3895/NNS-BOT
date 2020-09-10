@@ -14,6 +14,8 @@ describe('Command Handler', () => {
             expect(cmd).to.have.property('execute');
             if (cmd.name === 'help')
                 expect(cmd).to.have.keys('name', 'alias', 'description');
+            else if (cmd.name === 'status')
+                expect(cmd).to.have.keys('name', 'alias', 'description', 'man', 'jiraApiHandler');
             else
                 expect(cmd).to.have.keys('name', 'alias', 'description', 'man');
         }

@@ -2,7 +2,7 @@
 
 export default class MockResponse {
     public readonly validTicket = {
-        expand: 'renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations,customfield_10267.serviceName',
+        expand: 'renderedFields,names,schema,operations,editmeta',
         id: '16996',
         self: 'https://jatahworx.atlassian.net/rest/api/3/issue/16996',
         key: 'MO-49',
@@ -12,7 +12,7 @@ export default class MockResponse {
                 self: 'https://jatahworx.atlassian.net/rest/api/3/issuetype/10102',
                 id: '10102',
                 description: 'The sub-task of the issue',
-                iconUrl: 'https://jatahworx.atlassian.net/secure/viewavatar?size=medium&avatarId=10316&avatarType=issuetype',
+                iconUrl: 'https://jatahworx.atlassian.net/secure/viewavatar?avatarType=issuetype',
                 name: 'Sub-task',
                 subtask: true,
                 avatarId: 10316
