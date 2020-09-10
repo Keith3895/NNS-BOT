@@ -22,9 +22,6 @@ export default class Jira {
             }
         };
         return new Promise((resolve, reject) => {
-            if (typeof options !== 'object')
-                return reject('Request options is empty');
-
             request.get(options, (err, res, body) => {
                 if (err)
                     reject('API Failed');

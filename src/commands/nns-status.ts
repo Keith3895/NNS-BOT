@@ -4,8 +4,8 @@ import Jira from '../service/jiraApiHandler';
 export class StatusCommand {
     readonly name: string = 'status';
     readonly alias: string = 'status';
-    readonly description: string = `Key in !nns.status <JIRATICKET> to get status`;
-    readonly man: string = `Displays the status of the entered JIRA Ticket.`;
+    readonly description: string = `Displays the status of the entered JIRA Ticket.`;
+    readonly man: string = `Key in !nns.status <JIRATICKET> to get status`;
     private jiraApiHandler: Jira;
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
@@ -53,8 +53,8 @@ export class StatusCommand {
         }
         helpEmbed.setColor('#F8AA2A')
             .setTitle('JIRA Ticket Status')
-            .setDescription('Supported Command')
-            .addField('!nns.status <TicketRef>', 'Displays the status of the entered JIRA Ticket.', true)
+            .setDescription(this.description)
+            .addField(`${prefix}${this.alias}`, this.man, true)
             .setTimestamp();
         try {
             message.channel.send(helpEmbed);
