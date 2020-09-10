@@ -4,7 +4,7 @@ export default class MockResponse {
     public readonly validTicket = {
         expand: 'renderedFields,names,schema,operations,editmeta',
         id: '16996',
-        self: 'https://jatahworx.atlassian.net/rest/api/3/issue/16996',
+        // self: 'https://jatahworx.atlassian.net/rest/api/3/issue/16996',
         key: 'MO-49',
         fields: {
             statuscategorychangedate: '2019-12-18T12:10:05.509+0530',

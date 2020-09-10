@@ -30,9 +30,10 @@ describe('StatusCommandHandler', () => {
         client['prefix'] = process.env.PREFIX;
         mckTextChannel = mock(TextChannel);
         mockedMessageInstance.channel = instance(mckTextChannel);
-        command = new StatusCommand();
         jira = new Jira();
         mockStub = sandbox.stub(jira, 'getTicketStatus');
+        command = new StatusCommand(jira);
+        
     });
     afterEach(() => {
         sandbox.restore();
@@ -84,7 +85,7 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        mockStub.withArgs('MO-49').resolves(mockResponse.validTicket);
+        mockStub.withArgs('MO-49').returns(mockResponse.validTicket);
         const returnVal = await command.execute(mockedMessageInstance, ['MO-49'], client['prefix'], null);
         delete returnVal['timestamp'];
         delete helpEmbed.timestamp;
@@ -108,7 +109,7 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        mockStub.withArgs('ABC').resolves(mockResponse.invalidTicket);
+        mockStub.withArgs('ABC').returns(mockResponse.invalidTicket);
         const returnVal = await command.execute(mockedMessageInstance, ['ABC'], client['prefix'], null);
         delete returnVal['timestamp'];
         delete helpEmbed.timestamp;
