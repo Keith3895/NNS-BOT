@@ -33,7 +33,6 @@ describe('StatusCommandHandler', () => {
         jira = new Jira();
         mockStub = sandbox.stub(jira, 'getTicketStatus');
         command = new StatusCommand(jira);
-        
     });
     afterEach(() => {
         sandbox.restore();
