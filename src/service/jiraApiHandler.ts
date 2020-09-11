@@ -37,6 +37,11 @@ export default class Jira {
     }
 
 
+    /**
+     * Creates an JIRA issue
+     * @param issueObj : Config Object of the issue
+     * @param attachments  : Attachments if any
+     */
     public createIssue(issueObj, attachments?: []) {
         const options = {
             'url': `https://${this.host}/rest/api/3/issue`,

@@ -1,11 +1,13 @@
 import { config } from 'dotenv';
 config();
- import * as sinon from 'sinon';
+import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { Client, Guild, TextChannel, Message, User, Collection } from 'discord.js';
 import { instance, mock } from 'ts-mockito';
 import { BugCommand } from '../../src/commands';
 import CommandHandler from '../../src/service/commandHandler';
+import Jira from '../../src/service/jiraApiHandler';
+import MockResponse from '../mocks/jiraResponse.mock';
 
 describe('Bug Creation Handler', () => {
     let client: Client;
@@ -19,6 +21,9 @@ describe('Bug Creation Handler', () => {
     let mckTextChannel;
     let mockedClientInstance;
     let mockedClientClass;
+    let mockResponse: MockResponse;
+    let jira: Jira;
+    const sandbox = sinon.createSandbox();
 
     beforeEach(() => {
         client = new Client();
@@ -33,6 +38,11 @@ describe('Bug Creation Handler', () => {
         mckTextChannel = mock(TextChannel);
         mockedMessageInstance.channel = instance(mckTextChannel);
         mockedMessageInstance['author'] = new User(mockedClientInstance, { bot: false, id: 'test' });
+        mockResponse = new MockResponse();
+    });
+
+    afterEach(() => {
+        sandbox.restore();
     });
 
     it('Bug Command Initiate : Success', async (done) => {
@@ -46,7 +56,7 @@ describe('Bug Creation Handler', () => {
         mockedMessageInstance.content = '!nns.bug';
         mockedMessageInstance.reply('Please enter the bug title in 10 seconds ...!');
         sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
-        let res = bug.execute(mockedMessageInstance).then(result => {
+        bug.execute(mockedMessageInstance).then(result => {
             expect(result['title']).to.equal('Date Picker');
             expect(result['description']).to.equal('Format Incorrect');
             expect(result['severity']).to.equal('High');
@@ -141,5 +151,67 @@ describe('Bug Creation Handler', () => {
         });
         done();
     });
+
+    it('Empty collector : Timeout', (done) => {
+        let bug = new BugCommand();
+        const filter = m => m.author.id === mockedMessageInstance.author.id;
+        mockedMessageInstance.content = 'Bingo..!';
+        let collected = new Collection();
+        sinon.stub(mockedMessageInstance.channel, 'awaitMessages').returns(Promise.resolve(collected));
+        bug.awaitMessenger(filter, mockedMessageInstance, ['sd'], 1000, 4).catch(err => {
+            expect(err['message']).to.equal('Timeout , Please initaite from start');
+        });
+        done();
+    });
+
+    it('Create JIRA Issue : Success', (done) => {
+        let bug = new BugCommand();
+        const bugObject = {
+            title: 'Date Picker',
+            description: 'Format Incorrect',
+            severity: 'High',
+            confirm: 'Yes'
+        };
+        sandbox.stub(bug['jiraApiHandler'], 'createIssue').resolves(mockResponse.issueSuccessObj);
+        sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
+        bug.execute(mockedMessageInstance).then(result => {
+            expect(result['confirm']).to.equal('Yes');
+        });
+        done();
+    });
+
+
+    it('Create JIRA Issue : Failure', (done) => {
+        let bug = new BugCommand();
+        const bugObject = {
+            title: 'Date Picker',
+            description: 'Format Incorrect',
+            severity: 'High',
+            confirm: 'Yes'
+        };
+        sandbox.stub(bug['jiraApiHandler'], 'createIssue').returns(Promise.reject());
+        sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
+        bug.execute(mockedMessageInstance).then(result => {
+            expect(bug.creationFailed).to.equal(true);
+        });
+        done();
+    });
+
+
+    it('Bug creation cancelled by user', (done) => {
+        let bug = new BugCommand();
+        const bugObject = {
+            title: 'Date Picker',
+            description: 'Format Incorrect',
+            severity: 'High',
+            confirm: 'No'
+        };
+        sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
+        bug.execute(mockedMessageInstance).then(result => {
+            expect(result['confirm']).to.equal('No');
+        });
+        done();
+    });
+
 
 });

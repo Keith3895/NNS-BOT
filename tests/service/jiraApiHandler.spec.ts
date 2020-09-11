@@ -41,6 +41,24 @@ describe('JIRA API Handler', () => {
         });
     });
 
+    it('JIRA Create Issue : Success', (done) => {
+        let issueStub = sandbox.stub(request, 'post');
+        issueStub.yields(null, null, mockResponse.issueSuccessObj);
+        jira.createIssue({}).then(result => {
+            expect(result).to.have.property('key');
+            done();
+        });
+    });
+
+    it('JIRA Create Issue : Failute', (done) => {
+        let issueStub = sandbox.stub(request, 'post');
+        issueStub.yields(new Error());
+        jira.createIssue({}).catch(err => {
+            expect(err).to.equal('API Failed');
+            done();
+        });
+    });
+
 });
 
 

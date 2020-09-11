@@ -6,13 +6,14 @@ export class BugCommand {
     readonly alias: string = 'bug';
     private jiraApiHandler: Jira;
     readonly timeoutDuration: number = 120000;
+    public creationFailed : boolean = false;
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
     }
     execute(message: Message) {
 
         const filter = m => m.author.id === message.author.id;
-        let bugQueries = ['Please enter the bug title in 10 seconds ...!',
+        let bugQueries = ['Bug Initation Started',
             'Please enter the bug description ..!',
             'Please enter bug severity ..!',
             'Please confirm the above bug . Reply Yes , if ok , else No'];
@@ -58,8 +59,12 @@ export class BugCommand {
                     };
                     this.respondResultEmbed(resultObject, message);
                 }).catch(err => {
-                    return err;
+                    message.reply('Bug creation failed . Please retry');
+                    this.creationFailed = true;
+                    return new Error('Bug creation failed');
                 });
+            } else {
+                message.reply('Bug creation cancelled');
             }
             return res;
         }).catch(err => {
