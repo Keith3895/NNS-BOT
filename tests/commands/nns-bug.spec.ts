@@ -112,7 +112,7 @@ describe('Bug Creation Handler', () => {
         const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Date picker';
-        let collected = new Collection();
+        const collected = new Collection();
         collected.set(mockedMessageInstance.author.id, mockedMessageInstance);
         sinon.stub(bug, 'awaitMessenger').returns(Promise.resolve({ 'collected': collected, done: true }));
         bug.initaiteCollector(filter, mockedMessageInstance, ['sd'], 1000, 1).then(res => {
@@ -179,7 +179,7 @@ describe('Bug Creation Handler', () => {
 
 
     it('Create JIRA Issue : Failure', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const bugObject = {
             title: 'Date Picker',
             description: 'Format Incorrect',
@@ -196,7 +196,7 @@ describe('Bug Creation Handler', () => {
 
 
     it('Bug creation cancelled by user', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const bugObject = {
             title: 'Date Picker',
             description: 'Format Incorrect',
