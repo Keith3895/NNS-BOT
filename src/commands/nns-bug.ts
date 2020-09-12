@@ -1,15 +1,17 @@
 import { Message, MessageEmbed } from 'discord.js';
 import Jira from '../service/jiraApiHandler';
 export class BugCommand {
-    // constructor(){}
+
     readonly name: string = 'bug';
     readonly alias: string = 'bug';
     private jiraApiHandler: Jira;
     readonly timeoutDuration: number = 120000;
     public creationFailed : boolean = false;
+
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
     }
+
     execute(message: Message) {
 
         const filter = m => m.author.id === message.author.id;
@@ -70,9 +72,17 @@ export class BugCommand {
         }).catch(err => {
             return err;
         });
-
     }
 
+    /**
+     * Iniaties and message collector
+     * @param filter : Filter check for messages
+     * @param message : message content of type {Message}
+     * @param replyContent : Queries needs to ne replied
+     * @param timeout : Timeout duration of the message
+     * @param iterator : Iterator count
+     * @param bug : Empty object that need to responses with replies
+     */
     public initaiteCollector(filter, message: Message, replyContent: string[], timeout: number, iterator, bug = {}) {
         return this.awaitMessenger(filter, message, replyContent, timeout, iterator).then(res => {
             let keys = ['title', 'description', 'severity', 'confirm'];
@@ -88,7 +98,14 @@ export class BugCommand {
         });
     }
 
-
+    /**
+     * Awaits to messages till the end of iterator loop
+     * @param filter  : Filter check for messages
+     * @param message : message content of type {Message}
+     * @param replyContent : Queries needs to ne replied
+     * @param timeout : Timeout duration of the message
+     * @param iterator : Iterator count
+     */
     public awaitMessenger(filter, message: Message, replyContent: string[], timeout: number, iterator) {
         return new Promise((resolve, reject) => {
             message.channel.awaitMessages(filter, {
@@ -112,8 +129,12 @@ export class BugCommand {
         });
     }
 
-
-    public respondResultEmbed(embedObj, message: Message) {
+    /**
+     * Replies and returns an bug MessageEmbed
+     * @param embedObj : Bug Object that needs to be mapped
+     * @param message : message instnace of type message
+     */
+    private respondResultEmbed(embedObj, message: Message) {
         let projectName = embedObj['key'].split('-')[0];
         const bugEmbed = new MessageEmbed();
         bugEmbed.setColor('#DA0317')

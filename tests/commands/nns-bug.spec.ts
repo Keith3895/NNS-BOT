@@ -212,6 +212,4 @@ describe('Bug Creation Handler', () => {
         });
         done();
     });
-
-
 });
