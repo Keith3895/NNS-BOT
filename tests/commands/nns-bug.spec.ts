@@ -2,7 +2,7 @@ import { config } from 'dotenv';
 config();
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { Client, Guild, TextChannel, Message, User, Collection } from 'discord.js';
+import { Client, TextChannel, Message, User, Collection } from 'discord.js';
 import { instance, mock } from 'ts-mockito';
 import { BugCommand } from '../../src/commands';
 import CommandHandler from '../../src/service/commandHandler';
@@ -13,8 +13,6 @@ describe('Bug Creation Handler', () => {
     let mockedMessageClass: Message;
     let mockedMessageInstance: Message;
     let mockedCommandHandlerClass: CommandHandler;
-    let guild: Guild;
-    let channel: TextChannel;
     let mckTextChannel;
     let mockedClientInstance;
     let mockedClientClass;
@@ -24,8 +22,6 @@ describe('Bug Creation Handler', () => {
     beforeEach(() => {
         client = new Client();
         client['prefix'] = process.env.PREFIX;
-        guild = new Guild(client, {});
-        channel = new TextChannel(guild, {});
         mockedMessageClass = mock(Message);
         mockedMessageInstance = instance(mockedMessageClass);
         mockedCommandHandlerClass = mock(CommandHandler);
