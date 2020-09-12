@@ -6,7 +6,7 @@ export class BugCommand {
     readonly alias: string = 'bug';
     private jiraApiHandler: Jira;
     readonly timeoutDuration: number = 120000;
-    public creationFailed : boolean = false;
+    public creationFailed = false;
 
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
@@ -15,16 +15,16 @@ export class BugCommand {
     execute(message: Message) {
 
         const filter = m => m.author.id === message.author.id;
-        let bugQueries = ['Bug Initation Started',
+        const bugQueries = ['Bug Initation Started',
             'Please enter the bug description ..!',
             'Please enter bug severity ..!',
             'Please confirm the above bug . Reply Yes , if ok , else No'];
-        let iterator = 1;
+        const iterator = 1;
         message.reply('Please enter the bug title in 10 seconds ...!');
         return this.initaiteCollector(filter, message, bugQueries, this.timeoutDuration, iterator).then(res => {
             if (res['confirm'] && (res['confirm'].toLowerCase() === 'y' || res['confirm'].toLowerCase() === 'yes')) {
                 // Call JIRA create issue API
-                let bugObj = {
+                const bugObj = {
                     'fields': {
                         'summary': res['title'] || 'NA',
                         'issuetype': {
@@ -53,9 +53,9 @@ export class BugCommand {
                         }
                     }
                 };
-                this.jiraApiHandler.createIssue(bugObj).then((result: any) => {
+                this.jiraApiHandler.createIssue(bugObj).then((result: object) => {
                     // Send success Embed
-                    let resultObject = {
+                    const resultObject = {
                         ...result,
                         ...res
                     };
@@ -85,7 +85,7 @@ export class BugCommand {
      */
     public initaiteCollector(filter, message: Message, replyContent: string[], timeout: number, iterator, bug = {}) {
         return this.awaitMessenger(filter, message, replyContent, timeout, iterator).then(res => {
-            let keys = ['title', 'description', 'severity', 'confirm'];
+            const keys = ['title', 'description', 'severity', 'confirm'];
             bug[keys[iterator - 1]] = res['collected'].first().content;
             iterator++;
             if (res['done']) {
@@ -115,7 +115,7 @@ export class BugCommand {
                 if (!collected.first()) {
                     throw new Error('Timeout , Please initaite from start');
                 }
-                let resp = { 'collected': collected };
+                const resp = { 'collected': collected };
                 if (iterator === 4) {
                     resp['done'] = true;
                 } else {
@@ -135,11 +135,12 @@ export class BugCommand {
      * @param message : message instnace of type message
      */
     private respondResultEmbed(embedObj, message: Message) {
-        let projectName = embedObj['key'].split('-')[0];
+        const projectName = embedObj['key'].split('-')[0];
+        const bugUrl = `https://${process.env.JIRA_HOST}/browse/${embedObj['key']}`;
         const bugEmbed = new MessageEmbed();
         bugEmbed.setColor('#DA0317')
             .setTitle(embedObj['title'])
-            .setAuthor(embedObj['key'], 'attachment://project.png', `https://${process.env.JIRA_HOST}/browse/${embedObj['key']}`)
+            .setAuthor(embedObj['key'], 'attachment://project.png', bugUrl)
             .setDescription(embedObj['description'])
             .setThumbnail('attachment://bug.png')
             .addFields(

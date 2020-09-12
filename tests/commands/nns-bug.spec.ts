@@ -6,7 +6,6 @@ import { Client, Guild, TextChannel, Message, User, Collection } from 'discord.j
 import { instance, mock } from 'ts-mockito';
 import { BugCommand } from '../../src/commands';
 import CommandHandler from '../../src/service/commandHandler';
-import Jira from '../../src/service/jiraApiHandler';
 import MockResponse from '../mocks/jiraResponse.mock';
 
 describe('Bug Creation Handler', () => {
@@ -15,14 +14,12 @@ describe('Bug Creation Handler', () => {
     let mockedMessageClass: Message;
     let mockedMessageInstance: Message;
     let mockedCommandHandlerClass: CommandHandler;
-    let mockedCommandHandlerInstance: CommandHandler;
     let guild: Guild;
     let channel: TextChannel;
     let mckTextChannel;
     let mockedClientInstance;
     let mockedClientClass;
     let mockResponse: MockResponse;
-    let jira: Jira;
     const sandbox = sinon.createSandbox();
 
     beforeEach(() => {
@@ -79,7 +76,7 @@ describe('Bug Creation Handler', () => {
         let bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Bingo..!';
-        let collected = new Collection();
+        const collected = new Collection();
         collected.set(mockedMessageInstance.author.id, mockedMessageInstance);
         sinon.stub(mockedMessageInstance.channel, 'awaitMessages').returns(Promise.resolve(collected));
         bug.awaitMessenger(filter, mockedMessageInstance, ['sd'], 1000, 1).then(res => {
@@ -91,7 +88,8 @@ describe('Bug Creation Handler', () => {
     it('Msg await initiate : Failure', (done) => {
         let bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
-        sinon.stub(mockedMessageInstance.channel, 'awaitMessages').returns(Promise.reject(new Error('Oops. Please retry from start')));
+        sinon.stub(mockedMessageInstance.channel, 'awaitMessages')
+            .returns(Promise.reject(new Error('Oops. Please retry from start')));
         bug.awaitMessenger(filter, mockedMessageInstance, ['sd'], 1000, 1).catch(err => {
             expect(err['message']).to.equal('Oops. Please retry from start');
         });
