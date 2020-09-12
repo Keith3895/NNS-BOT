@@ -10,7 +10,6 @@ import MockResponse from '../mocks/jiraResponse.mock';
 
 describe('Bug Creation Handler', () => {
     let client: Client;
-    let bugCommand: BugCommand;
     let mockedMessageClass: Message;
     let mockedMessageInstance: Message;
     let mockedCommandHandlerClass: CommandHandler;
@@ -43,7 +42,7 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Bug Command Initiate : Success', async (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const bugObject = {
             title: 'Date Picker',
             description: 'Format Incorrect',
@@ -63,7 +62,7 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Bug Command Initiate : Failure', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         mockedMessageInstance.content = '!nns.bug';
         sinon.stub(bug, 'initaiteCollector').returns(Promise.reject(new Error('Initiate Failed')));
         bug.execute(mockedMessageInstance).catch(err => {
@@ -73,7 +72,7 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Msg await initiate : Success', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Bingo..!';
         const collected = new Collection();
@@ -86,7 +85,7 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Msg await initiate : Failure', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         sinon.stub(mockedMessageInstance.channel, 'awaitMessages')
             .returns(Promise.reject(new Error('Oops. Please retry from start')));
@@ -97,10 +96,10 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Msg await initiate : End Query', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Bingo..!';
-        let collected = new Collection();
+        const collected = new Collection();
         collected.set(mockedMessageInstance.author.id, mockedMessageInstance);
         sinon.stub(mockedMessageInstance.channel, 'awaitMessages').returns(Promise.resolve(collected));
         bug.awaitMessenger(filter, mockedMessageInstance, ['sd'], 1000, 4).then(res => {
@@ -110,7 +109,7 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Initiate Collector', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Date picker';
         let collected = new Collection();
@@ -123,10 +122,10 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Initiate Collector : Failure', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Date picker';
-        let collected = new Collection();
+        const collected = new Collection();
         collected.set(mockedMessageInstance.author.id, mockedMessageInstance);
         sinon.stub(bug, 'awaitMessenger').returns(Promise.reject('Failed'));
         bug.initaiteCollector(filter, mockedMessageInstance, ['sd'], 1000, 1).then(res => {
@@ -136,10 +135,10 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Initiate Collector : Next Query', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Date picker';
-        let collected = new Collection();
+        const collected = new Collection();
         collected.set(mockedMessageInstance.author.id, mockedMessageInstance);
         sinon.stub(bug, 'awaitMessenger')
             .onFirstCall().returns(Promise.resolve({ 'collected': collected }))
@@ -151,10 +150,10 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Empty collector : Timeout', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Bingo..!';
-        let collected = new Collection();
+        const collected = new Collection();
         sinon.stub(mockedMessageInstance.channel, 'awaitMessages').returns(Promise.resolve(collected));
         bug.awaitMessenger(filter, mockedMessageInstance, ['sd'], 1000, 4).catch(err => {
             expect(err['message']).to.equal('Timeout , Please initaite from start');
@@ -163,7 +162,7 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Create JIRA Issue : Success', (done) => {
-        let bug = new BugCommand();
+        const bug = new BugCommand();
         const bugObject = {
             title: 'Date Picker',
             description: 'Format Incorrect',
