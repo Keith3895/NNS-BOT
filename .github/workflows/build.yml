@@ -22,6 +22,7 @@ jobs:
       PREFIX: "!nns."
       JIRA_HOST: jira_host
       JIRA_AUTH: jira_auth
+      PROJECT_ID: project_id
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
