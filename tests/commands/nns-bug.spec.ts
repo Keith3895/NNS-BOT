@@ -20,7 +20,7 @@ describe('Bug Creation Handler', () => {
     let mockedClientClass;
     let mockResponse: MockResponse;
     const sandbox = sinon.createSandbox();
-
+    let bug ;
     beforeEach(() => {
         client = new Client();
         client['prefix'] = process.env.PREFIX;
@@ -35,6 +35,7 @@ describe('Bug Creation Handler', () => {
         mockedMessageInstance.channel = instance(mckTextChannel);
         mockedMessageInstance['author'] = new User(mockedClientInstance, { bot: false, id: 'test' });
         mockResponse = new MockResponse();
+        bug = new BugCommand();
     });
 
     afterEach(() => {
@@ -42,7 +43,6 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Bug Command Initiate : Success', async (done) => {
-        const bug = new BugCommand();
         const bugObject = {
             title: 'Date Picker',
             description: 'Format Incorrect',
@@ -62,7 +62,6 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Bug Command Initiate : Failure', (done) => {
-        const bug = new BugCommand();
         mockedMessageInstance.content = '!nns.bug';
         sinon.stub(bug, 'initaiteCollector').returns(Promise.reject(new Error('Initiate Failed')));
         bug.execute(mockedMessageInstance).catch(err => {
@@ -72,7 +71,6 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Msg await initiate : Success', (done) => {
-        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Bingo..!';
         const collected = new Collection();
@@ -85,7 +83,6 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Msg await initiate : Failure', (done) => {
-        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         sinon.stub(mockedMessageInstance.channel, 'awaitMessages')
             .returns(Promise.reject(new Error('Oops. Please retry from start')));
@@ -96,7 +93,6 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Msg await initiate : End Query', (done) => {
-        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Bingo..!';
         const collected = new Collection();
@@ -109,7 +105,6 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Initiate Collector', (done) => {
-        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Date picker';
         const collected = new Collection();
@@ -122,7 +117,6 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Initiate Collector : Failure', (done) => {
-        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Date picker';
         const collected = new Collection();
@@ -135,7 +129,6 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Initiate Collector : Next Query', (done) => {
-        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Date picker';
         const collected = new Collection();
@@ -150,7 +143,6 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Empty collector : Timeout', (done) => {
-        const bug = new BugCommand();
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         mockedMessageInstance.content = 'Bingo..!';
         const collected = new Collection();
@@ -162,7 +154,6 @@ describe('Bug Creation Handler', () => {
     });
 
     it('Create JIRA Issue : Success', (done) => {
-        const bug = new BugCommand();
         const bugObject = {
             title: 'Date Picker',
             description: 'Format Incorrect',
@@ -179,7 +170,6 @@ describe('Bug Creation Handler', () => {
 
 
     it('Create JIRA Issue : Failure', (done) => {
-        const bug = new BugCommand();
         const bugObject = {
             title: 'Date Picker',
             description: 'Format Incorrect',
@@ -196,7 +186,6 @@ describe('Bug Creation Handler', () => {
 
 
     it('Bug creation cancelled by user', (done) => {
-        const bug = new BugCommand();
         const bugObject = {
             title: 'Date Picker',
             description: 'Format Incorrect',

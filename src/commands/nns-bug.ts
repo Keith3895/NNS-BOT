@@ -7,6 +7,8 @@ export class BugCommand {
     private jiraApiHandler: Jira;
     readonly timeoutDuration: number = 120000;
     public creationFailed = false;
+    readonly description: string = `Initaites bug creation flow`;
+    readonly man: string = `!nns.bug followed by the responses for queries creates an bug`;
 
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
