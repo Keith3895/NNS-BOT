@@ -12,7 +12,7 @@ describe('Command Handler', () => {
         const cmdInst = new CommandHandler();
         const cmdList = cmdInst.commandLoader();
         for (let cmd of cmdList) {
-            for (let key of ['execute', 'name', 'alias', 'description', 'man']) {
+            for (const key of ['execute', 'name', 'alias', 'description', 'man']) {
                 expect(cmd).to.have.property(key);
             }
         }
