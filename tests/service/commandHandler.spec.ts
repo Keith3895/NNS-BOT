@@ -11,7 +11,7 @@ describe('Command Handler', () => {
     it('command object check.', () => {
         const cmdInst = new CommandHandler();
         const cmdList = cmdInst.commandLoader();
-        for (let cmd of cmdList) {
+        for (const cmd of cmdList) {
             for (const key of ['execute', 'name', 'alias', 'description', 'man']) {
                 expect(cmd).to.have.property(key);
             }
