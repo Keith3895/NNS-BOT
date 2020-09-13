@@ -1,7 +1,7 @@
 {
   "name": "nns-bot",
   "version": "0.0.1",
-  "description": "A discord bot to support with raising tickets and feature requests for Neutrions Studio.",
+  "description": "A discord bot to support with raising tickets and feature requests on Jira.",
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
@@ -23,9 +23,13 @@
     "discord",
     "bot",
     "nns-bot",
-    "neutrinos"
+    "Jira"
   ],
-  "author": "keith franklin",
+  "author": {
+    "name": "Keith Franklin",
+    "email": "jeith30895@gmail.com",
+    "url": "https://www.keithfranklin.xyz"
+  },
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Keith3895/NNS-BOT/issues"
@@ -36,6 +40,11 @@
       "name": "Shashank Hegde",
       "email": "shashank16aug19@gmail.com",
       "url": "https://www.linkedin.com/in/shashank-hegde-88894111a"
+    },
+    {
+      "name": "Ramesh BG",
+      "email": "rameshbg11@gmail.com",
+      "url": "https://www.linkedin.com/in/rameshbg/"
     }
   ],
   "dependencies": {
