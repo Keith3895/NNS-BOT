@@ -5,3 +5,5 @@ dist
 node_modules
 .nyc_output
 coverage
+docker-compose.yml
+yarn-error.log

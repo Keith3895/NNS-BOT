@@ -33,12 +33,15 @@
   "homepage": "https://github.com/Keith3895/NNS-BOT#readme",
   "contributors": [
     {
-      "name": "Shashank"
+      "name": "Shashank Hegde",
+      "email": "shashank16aug19@gmail.com",
+      "url": "https://www.linkedin.com/in/shashank-hegde-88894111a"
     }
   ],
   "dependencies": {
     "discord.js": "^12.3.1",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "codecov": "^3.7.2",
@@ -50,7 +53,6 @@
     "chai": "^4.2.0",
     "mocha": "^8.1.3",
     "nyc": "^15.1.0",
-    "request": "^2.88.2",
     "sinon": "^9.0.3",
     "ts-mockito": "^2.6.1",
     "ts-node": "^9.0.0",
