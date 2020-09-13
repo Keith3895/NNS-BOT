@@ -1,6 +1,6 @@
 {
   "name": "nns-bot",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A discord bot to support with raising tickets and feature requests on Jira.",
   "main": "index.js",
   "scripts": {
