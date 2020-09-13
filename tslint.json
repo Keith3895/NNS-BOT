@@ -6,10 +6,9 @@
     "jsRules": {},
     "rules": {
         "no-console": {
-            "severity": "warning",
+            "severity": "error",
             "options": [
                 "debug",
-                "info",
                 "log",
                 "time",
                 "timeEnd",
