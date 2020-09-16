@@ -2,6 +2,7 @@ import { Client, Message } from 'discord.js';
 import { MessageHandler } from './service/messageHandler';
 import CommandHandler from './service/commandHandler';
 import { escapeRegex } from './service/utils';
+import CooldownHandler from './service/cooldownService';
 export class Bot {
 
   private client: Client;
@@ -10,11 +11,12 @@ export class Bot {
 
   private messageHandler: MessageHandler;
   private commandHandler: CommandHandler;
-
+  private cooldownHandler: CooldownHandler;
   constructor(
     client?: Client,
     messageHandler?: MessageHandler,
-    commandHandler?: CommandHandler
+    commandHandler?: CommandHandler,
+    cooldownHandler?: CooldownHandler
   ) {
     this.client = client || new Client();
     this.token = process.env.TOKEN;
@@ -22,11 +24,12 @@ export class Bot {
     this.client['prefix'] = this.PREFIX;
     this.messageHandler = messageHandler || new MessageHandler();
     this.commandHandler = commandHandler || new CommandHandler();
+    this.cooldownHandler = cooldownHandler || new CooldownHandler();
     this.client['commands'] = new Map();
     this.initCommands();
   }
 
-  private initCommands(){
+  private initCommands() {
     const cmdList = this.commandHandler.commandLoader();
     if (!cmdList) return [];
     cmdList.forEach(cmdInst => {
@@ -47,6 +50,11 @@ export class Bot {
     this.client.on('message', this.messageEventHandler);
 
     return this.client.login(this.token);
+  }
+  private cooldown(command): boolean {
+    if (process.env.PRO)
+      return true;
+    return this.cooldownHandler.isCooldown(command);
   }
   messageEventHandler = (message: Message) => {
     // Ignoring bot message.
@@ -70,6 +78,11 @@ export class Bot {
       if (!command)
         return 'not a command.';
       try {
+        if (this.cooldown(command)) {
+          message.reply(`the ${command.name} command has to cooldown before you can use it again.`).catch(console.error);
+          return 'cooldown';
+        }
+        this.cooldownHandler.cooldown = command;
         command.execute(message, args);
         return 'executed command.';
       } catch (error) {
