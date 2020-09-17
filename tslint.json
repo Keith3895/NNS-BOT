@@ -78,7 +78,14 @@
                 "allow-destructuring": true
             }
         ],
-        "use-isnan": true
+        "use-isnan": true,
+        "max-line-length":[true,140],
+        "no-duplicate-imports":true,
+        "no-magic-numbers":true,
+        "class-name":true,
+        "cyclomatic-complexity":[true,15],
+        "no-unused-variable":true
+        
     },
     "rulesDirectory": []
 }

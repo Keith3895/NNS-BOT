@@ -1,5 +1,6 @@
 import { Message, MessageEmbed } from 'discord.js';
 import Jira from '../service/jiraApiHandler';
+const ITERATOR_LIMIT = 4;
 export class BugCommand {
 
     readonly name: string = 'bug';
@@ -117,7 +118,7 @@ export class BugCommand {
                     throw new Error('Timeout , Please initaite from start');
                 }
                 const resp = { 'collected': collected };
-                if (iterator === 4) {
+                if (iterator === ITERATOR_LIMIT) {
                     resp['done'] = true;
                 } else {
                     message.reply(replyContent[iterator]);

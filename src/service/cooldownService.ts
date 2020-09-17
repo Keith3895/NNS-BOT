@@ -1,8 +1,9 @@
+const DEFAULT_COOLDOWN = 1000;
 export default class CooldownHandler {
     cooldownStack = new Map();
 
     set cooldown(cmd) {
-        let cooldownTimeout = cmd.cooldown || 1000;
+        let cooldownTimeout = cmd.cooldown || DEFAULT_COOLDOWN;
         let currTime = new Date().getTime();
         this.cooldownStack.set(cmd.name, {
             timeout: currTime +
