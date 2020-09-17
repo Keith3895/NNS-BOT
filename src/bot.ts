@@ -53,7 +53,7 @@ export class Bot {
   }
   private cooldown(command): boolean {
     if (process.env.PRO)
-      return true;
+      return false;
     return this.cooldownHandler.isCooldown(command);
   }
   messageEventHandler = (message: Message) => {
@@ -64,10 +64,6 @@ export class Bot {
       this.messageHandler.handle(message).then(console.warn).catch(console.warn);
       return 'DM handled';
     } else {
-      /**
-       * the following block is to ignore quotes.
-       */
-      const botID = this.client.user ? this.client.user.id : '';
       const prefixRegex = new RegExp(`^(${escapeRegex(this.PREFIX)})\\s*`);
       if (!prefixRegex.test(message.content)) return 'quote or not a command.';
 
@@ -79,7 +75,8 @@ export class Bot {
         return 'not a command.';
       try {
         if (this.cooldown(command)) {
-          message.reply(`the ${command.name} command has to cooldown before you can use it again.`).catch(console.error);
+          message
+          .reply(`the ${command.name} command has a ${this.cooldownHandler.timeleft(command)}s cooldown before you can use it again.`);
           return 'cooldown';
         }
         this.cooldownHandler.cooldown = command;

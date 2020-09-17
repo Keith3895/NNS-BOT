@@ -9,7 +9,6 @@ export class BugCommand {
     public creationFailed = false;
     readonly description: string = `Initaites bug creation flow`;
     readonly man: string = `!nns.bug followed by the responses for queries creates an bug`;
-
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
     }
