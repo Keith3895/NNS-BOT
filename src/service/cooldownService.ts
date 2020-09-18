@@ -21,7 +21,7 @@ export default class CooldownHandler {
         const cooldownEntry = this.cooldownStack.get(cmd.name);
         if (!cooldownEntry)
             return '0';
-        let currTime = new Date().getTime();
+        const currTime = new Date().getTime();
         return ((cooldownEntry['timeout'] - currTime) / 1000).toFixed(1);
     }
 }
