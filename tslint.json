@@ -79,7 +79,7 @@
             }
         ],
         "use-isnan": true,
-        "max-line-length":[true,140],
+        "max-line-length":[true,120],
         "no-duplicate-imports":true,
         "no-magic-numbers":true,
         "class-name":true,

@@ -3,8 +3,8 @@ export default class CooldownHandler {
     cooldownStack = new Map();
 
     set cooldown(cmd) {
-        let cooldownTimeout = cmd.cooldown || DEFAULT_COOLDOWN;
-        let currTime = new Date().getTime();
+        const cooldownTimeout = cmd.cooldown || DEFAULT_COOLDOWN;
+        const currTime = new Date().getTime();
         this.cooldownStack.set(cmd.name, {
             timeout: currTime +
                 cooldownTimeout, ...cmd
@@ -18,7 +18,7 @@ export default class CooldownHandler {
         this.cooldownStack.delete(cmd.name);
     }
     timeleft(cmd): string {
-        let cooldownEntry = this.cooldownStack.get(cmd.name);
+        const cooldownEntry = this.cooldownStack.get(cmd.name);
         if (!cooldownEntry)
             return '0';
         let currTime = new Date().getTime();
