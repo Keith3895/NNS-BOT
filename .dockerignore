@@ -1,9 +1,8 @@
 .vscode
 .env
 yarn.lock
-dist
 node_modules
 .nyc_output
 coverage
-docker-compose.yml
-yarn-error.log
+src
+tests

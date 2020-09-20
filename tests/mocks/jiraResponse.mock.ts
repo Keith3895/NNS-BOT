@@ -157,4 +157,10 @@ export default class MockResponse {
             errorMessages: ['Issue does not exist or you do not have permission to see it.'],
             errors: {}
         };
+
+    public readonly issueSuccessObj = {
+        'id': '23156',
+        'key': 'PROJ-36',
+        'self': 'https://your-domain.atlassian.net/rest/api/3/issue/23156'
+    }
 }

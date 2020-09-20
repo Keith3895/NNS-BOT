@@ -60,7 +60,7 @@ export class Bot {
        * the following block is to ignore quotes.
        */
       const botID = this.client.user ? this.client.user.id : '';
-      const prefixRegex = new RegExp(`^(<@!?${botID}>|${escapeRegex(this.PREFIX)})\\s*`);
+      const prefixRegex = new RegExp(`^(${escapeRegex(this.PREFIX)})\\s*`);
       if (!prefixRegex.test(message.content)) return 'quote or not a command.';
 
       const [, matchedPrefix] = message.content.match(prefixRegex);

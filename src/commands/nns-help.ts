@@ -6,6 +6,8 @@ export class HelpCommand {
     readonly description: string = `
     Display all commands and descriptions
     `;
+    readonly man: string = 'Display all commands and descriptions';
+
     execute(message, args, prefix = message.client.prefix, commands = message.client.commands) {
         const helpEmbed = new MessageEmbed();
         helpEmbed.setTitle('nns-bot Help')
