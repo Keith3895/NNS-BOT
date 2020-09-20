@@ -2,6 +2,7 @@ import { Client, Message } from 'discord.js';
 import { MessageHandler } from './service/messageHandler';
 import CommandHandler from './service/commandHandler';
 import { escapeRegex } from './service/utils';
+import CooldownHandler from './service/cooldownService';
 export class Bot {
 
   private client: Client;
@@ -10,11 +11,12 @@ export class Bot {
 
   private messageHandler: MessageHandler;
   private commandHandler: CommandHandler;
-
+  private cooldownHandler: CooldownHandler;
   constructor(
     client?: Client,
     messageHandler?: MessageHandler,
-    commandHandler?: CommandHandler
+    commandHandler?: CommandHandler,
+    cooldownHandler?: CooldownHandler
   ) {
     this.client = client || new Client();
     this.token = process.env.TOKEN;
@@ -22,11 +24,12 @@ export class Bot {
     this.client['prefix'] = this.PREFIX;
     this.messageHandler = messageHandler || new MessageHandler();
     this.commandHandler = commandHandler || new CommandHandler();
+    this.cooldownHandler = cooldownHandler || new CooldownHandler();
     this.client['commands'] = new Map();
     this.initCommands();
   }
 
-  private initCommands(){
+  private initCommands() {
     const cmdList = this.commandHandler.commandLoader();
     if (!cmdList) return [];
     cmdList.forEach(cmdInst => {
@@ -48,6 +51,11 @@ export class Bot {
 
     return this.client.login(this.token);
   }
+  private cooldown(command): boolean {
+    if (process.env.PRO)
+      return false;
+    return this.cooldownHandler.isCooldown(command);
+  }
   messageEventHandler = (message: Message) => {
     // Ignoring bot message.
     if (message.author.bot) return 'bot message';
@@ -56,10 +64,6 @@ export class Bot {
       this.messageHandler.handle(message).then(console.warn).catch(console.warn);
       return 'DM handled';
     } else {
-      /**
-       * the following block is to ignore quotes.
-       */
-      const botID = this.client.user ? this.client.user.id : '';
       const prefixRegex = new RegExp(`^(${escapeRegex(this.PREFIX)})\\s*`);
       if (!prefixRegex.test(message.content)) return 'quote or not a command.';
 
@@ -70,6 +74,12 @@ export class Bot {
       if (!command)
         return 'not a command.';
       try {
+        if (this.cooldown(command)) {
+          message
+          .reply(`the ${command.name} command has a ${this.cooldownHandler.timeleft(command)}s cooldown before you can use it again.`);
+          return 'cooldown';
+        }
+        this.cooldownHandler.cooldown = command;
         command.execute(message, args);
         return 'executed command.';
       } catch (error) {

@@ -11,7 +11,7 @@
     "precontainerize": "npm run build",
     "containerize": "docker build -t nns-bot/$npm_package_version .",
     "postcontainerize": "sed 's/{{version}}/'$npm_package_version'/' docker-compose.template.yml > docker-compose.yml",
-    "test": "mocha --exit -r ts-node/register \"tests/**/*.spec.ts\"",
+    "test": "mocha --exit -r ts-node/register \"tests/**/*.spec.ts\" --timeout 10000",
     "coverage": "nyc npm run test",
     "coverage-upload": "nyc --reporter=lcov --reporter=cobertura npm test && codecov"
   },
