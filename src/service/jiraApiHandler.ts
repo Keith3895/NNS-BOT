@@ -38,6 +38,31 @@ export default class Jira {
 
 
     /**
+     * searches  JIRA issue
+     * @param issueObj : JQL of the issue
+     */
+    public searchIssue(issueObj) {
+        const options = {
+            'url': `https://${this.host}/rest/api/3/search`,
+            'headers': {
+                'Authorization': this.jiraAuth,
+                'Accept': 'application/json'
+            },
+            json: true,
+            body: issueObj
+        };
+        return new Promise((resolved, rejected) => {
+            request.post(options, (err, res, body) => {
+                if (err) {
+                    return rejected('API Failed');
+                }
+                if (body) {
+                    return resolved(body);
+                }
+            });
+        });
+    }
+    /**
      * Creates an JIRA issue
      * @param issueObj : Config Object of the issue
      * @param attachments  : Attachments if any
