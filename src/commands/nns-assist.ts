@@ -8,6 +8,7 @@ export class AssistCommand {
     readonly alias: string = 'assist';
     readonly description: string = `Displays  the comprehensive information of entered title/description/JIRA ticket.`;
     readonly man: string = `!nns.assist followed by  title/description/ticket reference  to get information of issues.`;
+    readonly cooldown = 9000;
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
 
