@@ -56,7 +56,7 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        const returnVal = await command.execute(mockedMessageInstance, null, client['prefix'], commandsList);
+        const returnVal = await command.execute(mockedMessageInstance, null, client['prefix']);
         delete returnVal['timestamp'];
         delete helpEmbed.timestamp;
         expect(returnVal).to.deep.equal(helpEmbed);
@@ -84,7 +84,7 @@ describe('StatusCommandHandler', () => {
             files: []
         });
         mockStub.withArgs('MO-49').returns(mockResponse.validTicket);
-        const returnVal = await command.execute(mockedMessageInstance, ['MO-49'], client['prefix'], null);
+        const returnVal = await command.execute(mockedMessageInstance, ['MO-49'], client['prefix']);
         delete returnVal['timestamp'];
         delete helpEmbed.timestamp;
         expect(returnVal).to.deep.equals(helpEmbed);
@@ -108,7 +108,7 @@ describe('StatusCommandHandler', () => {
             files: []
         });
         mockStub.withArgs('ABC').returns(mockResponse.invalidTicket);
-        const returnVal = await command.execute(mockedMessageInstance, ['ABC'], client['prefix'], null);
+        const returnVal = await command.execute(mockedMessageInstance, ['ABC'], client['prefix']);
         delete returnVal['timestamp'];
         delete helpEmbed.timestamp;
         expect(returnVal).to.deep.equals(helpEmbed);

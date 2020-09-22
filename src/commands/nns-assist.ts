@@ -56,6 +56,8 @@ export class AssistCommand {
     private respondResultEmbed(jiraResp, message: Message) {
         const assistEmbed = new MessageEmbed();
         let projectName;
+        console.log(jiraResp);
+
         if (jiraResp && jiraResp.errorMessages) {
             assistEmbed.setColor('#FF0000')
                 .setTitle(`Invalid Ticket or Ticket does not exists!`)

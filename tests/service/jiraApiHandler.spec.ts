@@ -12,17 +12,16 @@ describe('JIRA API Handler', () => {
     let jira: Jira;
     let mockResponse: MockResponse;
     const sandbox = sinon.createSandbox();
-    let mockStub;
     beforeEach(() => {
         mockResponse = new MockResponse();
         jira = new Jira();
-        mockStub = sandbox.stub(request, 'get');
     });
     afterEach(() => {
         sandbox.restore();
     });
 
     it('Jira Status API with Ticket', (done) => {
+        const mockStub = sandbox.stub(request, 'get');
         mockStub.yields(null, null, JSON.stringify(mockResponse.validTicket));
         jira.getTicketStatus('MO-49').then(response => {
             expect(response).to.have.property('fields');
@@ -32,11 +31,10 @@ describe('JIRA API Handler', () => {
         });
     });
     it('Jira Status API with Ticket:error', (done) => {
-        mockStub.yields('null', null, '');
-        jira.getTicketStatus('').then(response => {
-            done();
-        }).catch((error) => {
-            console.warn(error);
+        const mockStub = sandbox.stub(request, 'get');
+        mockStub.yields(new Error());
+        jira.getTicketStatus('').catch(err => {
+            expect(err).to.equal('API Failed');
             done();
         });
     });
@@ -54,6 +52,23 @@ describe('JIRA API Handler', () => {
         const issueStub = sandbox.stub(request, 'post');
         issueStub.yields(new Error());
         jira.createIssue({}).catch(err => {
+            expect(err).to.equal('API Failed');
+            done();
+        });
+    });
+    it('JIRA Search Issue : Success', (done) => {
+        const issueStub = sandbox.stub(request, 'post');
+        issueStub.yields(null, null, mockResponse.searchSuccessObj);
+        jira.searchIssue('touch id').then(result => {
+            expect(result).to.have.property('issues');
+            done();
+        });
+    });
+
+    it('JIRA Search Issue : Failure', (done) => {
+        const issueStub = sandbox.stub(request, 'post');
+        issueStub.yields(new Error());
+        jira.searchIssue({}).catch(err => {
             expect(err).to.equal('API Failed');
             done();
         });

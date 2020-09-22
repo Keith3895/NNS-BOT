@@ -162,5 +162,19 @@ export default class MockResponse {
         'id': '23156',
         'key': 'PROJ-36',
         'self': 'https://your-domain.atlassian.net/rest/api/3/issue/23156'
-    }
+    };
+    public readonly searchSuccessObj = {
+        expand: 'schema,names',
+        startAt: 0,
+        maxResults: 15,
+        total: 3,
+        issues: [
+            {
+                expand: 'operations,versionedRepresentations,editmeta,changelog,renderedFields',
+                id: '19165',
+                self: 'https://jatahworx.atlassian.net/rest/api/3/issue/19165',
+                key: 'MO-372'
+            }]
+
+    };
 }
