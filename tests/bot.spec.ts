@@ -2,10 +2,11 @@ import 'mocha';
 import { expect } from 'chai';
 import { MessageHandler } from '../src/service/messageHandler';
 import { instance, mock, verify, when } from 'ts-mockito';
-import { Message, Client, User, DMChannel, Channel, TextChannel } from 'discord.js';
+import { Message, Client, User, TextChannel } from 'discord.js';
 import CommandHandler from '../src/service/commandHandler';
 import { Bot } from '../src/bot';
-import { HelpCommand, PingCommand } from '../src/commands';
+import { PingCommand } from '../src/commands';
+import CooldownHandler from '../src/service/cooldownService';
 describe('bot class', () => {
     let mockedMessageHandlerClass: MessageHandler;
     let mockedMessageHandlerInstance: MessageHandler;
@@ -15,6 +16,8 @@ describe('bot class', () => {
     let mockedMessageInstance: Message;
     let mockedClientClass: Client;
     let mockedClientInstance: Client;
+    let mockedCooldownClass: CooldownHandler;
+    let mockedCooldownInstance: CooldownHandler;
     let mckTextChannel;
     let mockPing;
     let pingInstance;
@@ -32,9 +35,16 @@ describe('bot class', () => {
         mockedMessageInstance.channel = instance(mckTextChannel);
         mockPing = mock(PingCommand);
         pingInstance = instance(mockPing);
+        pingInstance.name = 'ping';
+        mockedCooldownClass = mock(CooldownHandler);
+        mockedCooldownInstance = instance(mockedCooldownClass);
         when(mockedCommandHandlerClass.commandLoader()).thenReturn([pingInstance]);
         mockedMessageInstance['author'] = new User(mockedClientInstance, { bot: false, id: 'test' });
-        service = new Bot(mockedClientInstance, mockedMessageHandlerInstance, mockedCommandHandlerInstance);
+        process.env['PRO'] = 'true';
+        service = new Bot(mockedClientInstance,
+            mockedMessageHandlerInstance,
+            mockedCommandHandlerInstance,
+            mockedCooldownInstance);
     });
     it('instantiated', () => {
         verify(mockedCommandHandlerClass.commandLoader()).once();
@@ -68,7 +78,7 @@ describe('bot class', () => {
     });
     it('test messageEvethandler: command message', () => {
         when(mockedMessageHandlerClass.handle(mockedMessageInstance)).thenResolve();
-        mockedMessageInstance.content = '!nns.cmd';
+        mockedMessageInstance.content = '!nns.ping';
         when(mockPing.execute(mockedMessageInstance, [])).thenReturn('');
         expect(service.messageEventHandler(mockedMessageInstance)).to.equal('executed command.');
     });
@@ -77,5 +87,14 @@ describe('bot class', () => {
         mockedMessageInstance.content = '!nns.notacmd';
         when(mockPing.execute(mockedMessageInstance)).thenReturn('');
         expect(service.messageEventHandler(mockedMessageInstance)).to.equal('not a command.');
+    });
+    it('with cooldown active', () => {
+        delete process.env['PRO'];
+        when(mockedMessageHandlerClass.handle(mockedMessageInstance)).thenResolve();
+        mockedMessageInstance.content = '!nns.ping';
+        when(mockPing.execute(mockedMessageInstance, [])).thenReturn('');
+        when(mockedCooldownClass.isCooldown(pingInstance)).thenReturn(true);
+        when(mockedCooldownClass.timeleft(pingInstance)).thenReturn('4.1');
+        expect(service.messageEventHandler(mockedMessageInstance)).to.equal('cooldown');
     });
 });
