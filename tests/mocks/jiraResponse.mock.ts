@@ -170,11 +170,35 @@ export default class MockResponse {
         total: 3,
         issues: [
             {
-                expand: 'operations,versionedRepresentations,editmeta,changelog,renderedFields',
-                id: '19165',
-                self: 'https://jatahworx.atlassian.net/rest/api/3/issue/19165',
-                key: 'MO-372'
+                expand: 'renderedFields,names,schema,operations,editmeta',
+                id: '16996',
+                key: 'MO-49',
+                fields: {
+                    summary: 'Touh ID popup',
+                    project: {
+                        self: 'https://jatahworx.atlassian.net/rest/api/3/project/10345',
+                        id: '10345',
+                        key: 'MO',
+                        name: 'MPIG_OMNI',
+                        projectTypeKey: 'software',
+                        simplified: false,
+                        avatarUrls: [Object]
+                    }
+                }
             }]
 
     };
+    public readonly searchFailure = {
+        startAt: 0,
+        maxResults: 15,
+        total: 0,
+        issues: []
+    };
+
+    public readonly searchError = {
+        errorMessages: ['Unable to parse the text \'~help\' for field \'summary\'.'],
+        warningMessages: []
+    };
+
+
 }

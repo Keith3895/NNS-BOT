@@ -13,9 +13,11 @@ export class AssistCommand {
 
     }
 
-    execute(message, args, prefix = message.client.prefix) {
+    async execute(message, args, prefix = message.client.prefix) {
         const assistEmbed = new MessageEmbed();
+        assistEmbed.type = 'rich';
         let filterQuery;
+        let jiraResp;
         let searchObj = {
             'maxResults': 15,
             'fieldsByKeys': false,
@@ -28,66 +30,50 @@ export class AssistCommand {
             'startAt': 0
         };
         if (args && args.length > 0) {
-            filterQuery = this.prepareSearchFilter(args);
-            searchObj = Object.assign(searchObj, { 'jql': filterQuery });
-            this.jiraApiHandler.searchIssue(searchObj).then((result: object) => {
-                this.respondResultEmbed(result, message);
-            }).catch(err => {
-                message.reply('Failed to get the information. Please retry');
-                return new Error('Search API failed!');
-            });
+            try {
+                filterQuery = this.prepareSearchFilter(args);
+                searchObj = Object.assign(searchObj, { 'jql': filterQuery });
+                jiraResp = await this.jiraApiHandler.searchIssue(searchObj);
+                if (jiraResp && jiraResp.errorMessages) {
+                    assistEmbed.setColor('#FF0000')
+                        .setTitle(`Invalid Search Key`)
+                        .setDescription('Please try with valid description or ticket reference.')
+                        .setTimestamp();
+                    message.channel.send(assistEmbed);
+                    return assistEmbed;
+                }
+                if (jiraResp && jiraResp.issues && jiraResp.issues.length > 0) {
+                    assistEmbed.setColor('#00ff00')
+                        .setTitle(jiraResp['issues'][0].fields.project.name)
+                        .setTimestamp();
+                    jiraResp.issues.forEach((issue) => {
+                        assistEmbed.addField(
+                            `**${issue.key}**`,
+                            `${issue.fields.summary}`,
+                            false
+                        );
+                    });
+                    message.channel.send(assistEmbed);
+                    return assistEmbed;
+                }
+                if (jiraResp && jiraResp.issues && jiraResp.issues.length === 0) {
+                    message.reply('The entered issue does not exists. Do you want to create one? If Yes, Please use !nns.bug command to raise the ticket');
+                    return 'Issue Does not exists';
+                }
+            } catch (e) {
+                return e;
+            }
         }
-        else {
-            assistEmbed.setColor('#F8AA2A')
-                .setTitle('nns-bot Assist')
-                .setDescription(this.description)
-                .addField(`${prefix}${this.alias}`, this.man, true)
-                .setTimestamp();
-            message.channel.send(assistEmbed);
-        }
-
-    }
-
-    /**
-     * Replies and returns an bug MessageEmbed
-     * @param jiraResp : Jira Response Object that needs to be mapped
-     * @param message : message instnace of type message
-     */
-    private respondResultEmbed(jiraResp, message: Message) {
-        const assistEmbed = new MessageEmbed();
-        let projectName;
-        console.log(jiraResp);
-
-        if (jiraResp && jiraResp.errorMessages) {
-            assistEmbed.setColor('#FF0000')
-                .setTitle(`Invalid Ticket or Ticket does not exists!`)
-                .setDescription(`${jiraResp['errorMessages'][0]}`)
-                .setTimestamp();
-            message.channel.send(assistEmbed);
-
-        }
-        else if (jiraResp && jiraResp.issues && jiraResp.issues.length > 0) {
-            projectName = jiraResp['issues'][0].fields.project.name;
-            assistEmbed.setColor('#00ff00')
-                .setTitle(projectName)
-                .setTimestamp();
-            jiraResp.issues.forEach((issue) => {
-                assistEmbed.addField(
-                    `**${issue.key}**`,
-                    `${issue.fields.summary}`,
-                    false
-                );
-            });
-            message.channel.send(assistEmbed);
-        }
-        else {
-            message.reply('The entered issue does not exists. Do you want to create one? If Yes, Please use !nns.bug command to raise the ticket');
-        }
-
+        assistEmbed.setColor('#F8AA2A')
+            .setTitle('nns-bot Assist')
+            .setDescription(this.description)
+            .addField(`${prefix}${this.alias}`, this.man, true)
+            .setTimestamp();
+        message.channel.send(assistEmbed);
         return assistEmbed;
     }
 
-    private prepareSearchFilter(searchkeys) {
+    public prepareSearchFilter(searchkeys) {
         const searchText = searchkeys.join(' ');
         const issueKeys = searchText.match(/((?!([A-Z0-9a-z]{1,10})-?$)[A-Z]{1}[A-Z0-9]+-\d+)/g);
         let filterQuery = `project = ${process.env.PROJECT_ID} AND `;

@@ -56,9 +56,7 @@ export default class Jira {
                 if (err) {
                     return rejected('API Failed');
                 }
-                if (body) {
-                    return resolved(body);
-                }
+                return resolved(body);
             });
         });
     }
@@ -82,9 +80,7 @@ export default class Jira {
                 if (err) {
                     return rejected('API Failed');
                 }
-                if (body) {
-                    return resolved(body);
-                }
+                return resolved(body);
             });
         });
     }
