@@ -65,14 +65,14 @@ describe('Assist Handler', () => {
     });
 
     it('Search filter: issueKey ', (done) => {
-        const mockResp = 'project = 10345 AND issueKey IN (\'MO-49\')';
+        const mockResp =  `project = ${process.env.PROJECT_ID} AND issueKey IN (\'MO-49\')`;
         const filterQuery = assist.prepareSearchFilter(['MO-49']);
         expect(filterQuery).equals(mockResp);
         done();
     });
 
     it('Search filter: Summary', (done) => {
-        const mockResp = 'project = 10345 AND summary ~ \'abc\'';
+        const mockResp = `project = ${process.env.PROJECT_ID} AND summary ~ \'abc\'`;
         const filterQuery = assist.prepareSearchFilter(['abc']);
         expect(filterQuery).equals(mockResp);
         done();
