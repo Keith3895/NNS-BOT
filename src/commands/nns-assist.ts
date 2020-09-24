@@ -18,33 +18,12 @@ export class AssistCommand {
     async execute(message, args, prefix = message.client.prefix) {
         const assistEmbed = new MessageEmbed();
         assistEmbed.type = 'rich';
-        let filterQuery;
         let jiraResp;
-        let searchObj = {
-            'maxResults': 15,
-            'fieldsByKeys': false,
-            'fields': [
-                'summary',
-                'status',
-                'assignee',
-                'reporter',
-                'project'],
-            'startAt': 0
-        };
+
         if (args && args.length > 0) {
             try {
-                filterQuery = this.prepareSearchFilter(args);
-                searchObj = Object.assign(searchObj, { 'jql': filterQuery });
-                const options = {
-                    'url': `https://${process.env.JIRA_HOST}/rest/api/3/search`,
-                    'headers': {
-                        'Authorization': process.env.JIRA_AUTH,
-                        'Accept': 'application/json'
-                    },
-                    json: true,
-                    body: searchObj
-                };
-                jiraResp = await this.jiraApiHandler.returnAwait(options, 'post');
+
+                jiraResp = await this.jiraApiHandler.searchIssue(args.join(' '));
                 if (jiraResp && jiraResp.errorMessages) {
                     assistEmbed.setColor('#FF0000')
                         .setTitle(`Invalid Search Key`)
@@ -85,16 +64,4 @@ export class AssistCommand {
         return assistEmbed;
     }
 
-    public prepareSearchFilter(searchkeys) {
-        const searchText = searchkeys.join(' ');
-        const issueKeys = searchText.match(/((?!([A-Z0-9a-z]{1,10})-?$)[A-Z]{1}[A-Z0-9]+-\d+)/g);
-        let filterQuery = `project = ${process.env.PROJECT_ID} AND `;
-        if (issueKeys && issueKeys.length > 0) {
-            filterQuery += 'issueKey IN (keys)';
-            filterQuery = filterQuery.replace(/keys/ig, '\'' + issueKeys.join('\',\'') + '\'');
-        }
-        else
-            filterQuery += `summary ~ \'${searchText}\'`;
-        return filterQuery;
-    }
 }

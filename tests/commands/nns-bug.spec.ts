@@ -156,7 +156,7 @@ describe('Bug Creation Handler', () => {
             severity: 'High',
             confirm: 'Yes'
         };
-        sandbox.stub(bug['jiraApiHandler'], 'returnAwait').resolves(mockResponse.issueSuccessObj);
+        sandbox.stub(bug['jiraApiHandler'], 'createIssue').resolves(mockResponse.issueSuccessObj);
         sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
         bug.execute(mockedMessageInstance).then(result => {
             expect(result['confirm']).to.equal('Yes');
@@ -172,7 +172,7 @@ describe('Bug Creation Handler', () => {
             severity: 'High',
             confirm: 'Yes'
         };
-        sandbox.stub(bug['jiraApiHandler'], 'returnAwait').returns(Promise.reject());
+        sandbox.stub(bug['jiraApiHandler'], 'createIssue').returns(Promise.reject());
         sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
         bug.execute(mockedMessageInstance).then(result => {
             expect(bug.creationFailed).to.equal(true);

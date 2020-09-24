@@ -55,18 +55,7 @@ export class BugCommand {
                         }
                     }
                 };
-                const options = {
-                    'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue`,
-                    'headers': {
-                        'Authorization': process.env.JIRA_AUTH,
-                        'Accept': 'application/json'
-                    },
-                    json: true,
-                    body: bugObj
-                };
-
-
-                this.jiraApiHandler.returnAwait(options, 'post').then((result: object) => {
+                this.jiraApiHandler.createIssue(bugObj).then((result: object) => {
                     // Send success Embed
                     const resultObject = {
                         ...result,

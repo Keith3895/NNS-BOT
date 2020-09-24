@@ -18,15 +18,7 @@ export class StatusCommand {
         if (args && args.length > 0) {
 
             try {
-                const options = {
-                    'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue/${args[0]}`,
-                    'headers': {
-                        'Authorization': process.env.JIRA_AUTH,
-                        'Accept': 'application/json'
-                    },
-                    json: true
-                };
-                jiraResponse = await this.jiraApiHandler.returnAwait(options, 'get');
+                jiraResponse = await this.jiraApiHandler.getTicketStatus(args[0]);
 
                 if (jiraResponse && jiraResponse.hasOwnProperty('errorMessages')) {
                     statusEmbed.setColor('#FF0000')

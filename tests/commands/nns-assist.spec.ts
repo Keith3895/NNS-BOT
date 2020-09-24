@@ -64,20 +64,6 @@ describe('Assist Handler', () => {
         expect(returnVal).to.deep.equal(assistEmbed);
     });
 
-    it('Search filter: issueKey ', (done) => {
-        const mockResp =  `project = ${process.env.PROJECT_ID} AND issueKey IN (\'MO-49\')`;
-        const filterQuery = assist.prepareSearchFilter(['MO-49']);
-        expect(filterQuery).equals(mockResp);
-        done();
-    });
-
-    it('Search filter: Summary', (done) => {
-        const mockResp = `project = ${process.env.PROJECT_ID} AND summary ~ \'abc\'`;
-        const filterQuery = assist.prepareSearchFilter(['abc']);
-        expect(filterQuery).equals(mockResp);
-        done();
-    });
-
     it('Search Issue: Success', async () => {
         const assistEmbed = new MessageEmbed({
             type: 'rich',
@@ -95,7 +81,7 @@ describe('Assist Handler', () => {
             footer: null,
             files: []
         });
-        sandbox.stub(assist.jiraApiHandler, 'returnAwait').resolves(mockResponse.searchSuccessObj);
+        sandbox.stub(assist.jiraApiHandler, 'searchIssue').resolves(mockResponse.searchSuccessObj);
         const searchresult = await assist.execute(mockedMessageInstance, ['MO-49'], client['prefix']);
         delete searchresult['timestamp'];
         delete assistEmbed.timestamp;
@@ -103,7 +89,7 @@ describe('Assist Handler', () => {
     });
 
     it('Search Isuue : No Issues Found', async () => {
-        sandbox.stub(assist.jiraApiHandler, 'returnAwait').resolves(mockResponse.searchFailure);
+        sandbox.stub(assist.jiraApiHandler, 'searchIssue').resolves(mockResponse.searchFailure);
         const searchresult = await assist.execute(mockedMessageInstance, ['abc'], client['prefix']);
         expect(searchresult).to.deep.equals('Issue Does not exists');
     });
@@ -125,7 +111,7 @@ describe('Assist Handler', () => {
             footer: null,
             files: []
         });
-        sandbox.stub(assist.jiraApiHandler, 'returnAwait').resolves(mockResponse.searchError);
+        sandbox.stub(assist.jiraApiHandler, 'searchIssue').resolves(mockResponse.searchError);
         const searchresult = await assist.execute(mockedMessageInstance, ['~help'], client['prefix']);
         delete searchresult['timestamp'];
         delete assistEmbed.timestamp;

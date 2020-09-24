@@ -12,26 +12,19 @@ describe('JIRA API Handler', () => {
     let jira: Jira;
     let mockResponse: MockResponse;
     const sandbox = sinon.createSandbox();
+    let mockStub;
     beforeEach(() => {
         mockResponse = new MockResponse();
         jira = new Jira();
+        mockStub = sandbox.stub(request, 'get');
     });
     afterEach(() => {
         sandbox.restore();
     });
 
     it('Jira Status API with Ticket', (done) => {
-        const mockStub = sandbox.stub(request, 'get');
         mockStub.yields(null, null, JSON.stringify(mockResponse.validTicket));
-        const options = {
-            'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue/MO-49`,
-            'headers': {
-                'Authorization': process.env.JIRA_AUTH,
-                'Accept': 'application/json'
-            },
-            json: true
-        };
-        jira.returnAwait(options, 'get').then(response => {
+        jira.getTicketStatus('MO-49').then(response => {
             expect(response).to.have.property('fields');
             done();
         }).catch((error) => {
@@ -39,105 +32,66 @@ describe('JIRA API Handler', () => {
         });
     });
     it('Jira Status API with Ticket:error', (done) => {
-        const mockStub = sandbox.stub(request, 'get');
-        mockStub.yields(new Error());
-        const options = {
-            'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue/ `,
-            'headers': {
-                'Authorization': process.env.JIRA_AUTH,
-                'Accept': 'application/json'
-            },
-            json: true
-        };
-        jira.returnAwait(options, 'get').catch(err => {
-            expect(err).to.equal('API Failed');
+        mockStub.yields('null', null, '');
+        jira.getTicketStatus('').then(response => {
+            done();
+        }).catch((error) => {
+            console.warn(error);
             done();
         });
     });
 
     it('JIRA Create Issue : Success', (done) => {
-        const options = {
-            'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue`,
-            'headers': {
-                'Authorization': process.env.JIRA_AUTH,
-                'Accept': 'application/json'
-            },
-            json: true,
-            body: {}
-        };
         const issueStub = sandbox.stub(request, 'post');
         issueStub.yields(null, null, mockResponse.issueSuccessObj);
-        jira.returnAwait(options, 'post').then(result => {
+        jira.createIssue({}).then(result => {
             expect(result).to.have.property('key');
             done();
         });
     });
-
     it('JIRA Create Issue : Failure', (done) => {
-        const options = {
-            'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue`,
-            'headers': {
-                'Authorization': process.env.JIRA_AUTH,
-                'Accept': 'application/json'
-            },
-            json: true,
-            body: {}
-        };
         const issueStub = sandbox.stub(request, 'post');
         issueStub.yields(new Error());
-        jira.returnAwait(options, 'post').catch(err => {
+        jira.createIssue({}).then(respo => {
+            done();
+        }).catch(err => {
             expect(err).to.equal('API Failed');
             done();
         });
     });
+    it('JQL filter: issueKey ', (done) => {
+        const mockResp = `project = ${process.env.PROJECT_ID} AND issueKey IN (\'MO-49\')`;
+        jira.createJQLFilter('MO-49');
+        const filterQuery = jira.createJQLFilter('MO-49');
+        expect(filterQuery).equals(mockResp);
+        done();
+    });
+    it('JQL filter: Summary', (done) => {
+        const mockResp = `project = ${process.env.PROJECT_ID} AND summary ~ \'abc\'`;
+        const filterQuery = jira.createJQLFilter('abc');
+        expect(filterQuery).equals(mockResp);
+        done();
+    });
     it('JIRA Search Issue : Success', (done) => {
-        const issueObj = {
-            'jql': `project = ${process.env.PROJECT_ID} AND  summary ~ 'touch id'`,
-            'maxResults': 15,
-            'fieldsByKeys': false,
-            'fields': [
-                'summary',
-                'status',
-                'assignee',
-                'reporter',
-                'project'],
-            'startAt': 0
-        };
-        const options = {
-            'url': `https://${process.env.JIRA_HOST}/rest/api/3/search`,
-            'headers': {
-                'Authorization': process.env.JIRA_AUTH,
-                'Accept': 'application/json'
-            },
-            json: true,
-            body: issueObj
-        };
-        const issueStub = sandbox.stub(request, 'post');
-        issueStub.yields(null, null, mockResponse.searchSuccessObj);
-        jira.returnAwait(options, 'post').then(result => {
+        const searchStub = sandbox.stub(request, 'post');
+        searchStub.yields(null, null, mockResponse.searchSuccessObj);
+        jira.searchIssue('touch id').then(result => {
             expect(result).to.have.property('issues');
             done();
         });
     });
 
-    it('JIRA Search Issue : Failure', (done) => {
-        const options = {
-            'url': `https://${process.env.JIRA_HOST}/rest/api/3/search`,
-            'headers': {
-                'Authorization': process.env.JIRA_AUTH,
-                'Accept': 'application/json'
-            },
-            json: true,
-            body: {}
-        };
+    it('Jira Search Issue: Invalid String', (done) => {
         const issueStub = sandbox.stub(request, 'post');
         issueStub.yields(new Error());
-        jira.returnAwait(options, 'post').catch(err => {
+        jira.searchIssue({}).then(respo => {
+            done();
+        }).catch(err => {
             expect(err).to.equal('API Failed');
             done();
         });
     });
-
 });
+
 
 

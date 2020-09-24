@@ -8,7 +8,7 @@ import { StatusCommand } from '../../src/commands';
 import Jira from '../../src/service/jiraApiHandler';
 import * as sinon from 'sinon';
 import MockResponse from '../mocks/jiraResponse.mock';
-
+import { httpRequest } from '../../src/service/utils';
 
 describe('StatusCommandHandler', () => {
     let mockedMessageClass: Message;
@@ -30,7 +30,7 @@ describe('StatusCommandHandler', () => {
         mckTextChannel = mock(TextChannel);
         mockedMessageInstance.channel = instance(mckTextChannel);
         jira = new Jira();
-        mockStub = sandbox.stub(jira, 'returnAwait');
+        mockStub = sandbox.stub(jira, 'getTicketStatus');
         command = new StatusCommand(jira);
     });
     afterEach(() => {
@@ -63,14 +63,7 @@ describe('StatusCommandHandler', () => {
     });
 
     it('status with valid ticket', async () => {
-        const options = {
-            'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue/MO-49`,
-            'headers': {
-                'Authorization': process.env.JIRA_AUTH,
-                'Accept': 'application/json'
-            },
-            json: true
-        };
+
         const statusEmbed = new MessageEmbed({
             type: 'rich',
             title: 'MPIG_OMNI',
@@ -91,7 +84,7 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        mockStub.withArgs(options, 'get').returns(mockResponse.validTicket);
+        mockStub.withArgs('MO-49').returns(mockResponse.validTicket);
         const returnVal = await command.execute(mockedMessageInstance, ['MO-49'], client['prefix']);
         delete returnVal['timestamp'];
         delete statusEmbed.timestamp;
@@ -99,14 +92,7 @@ describe('StatusCommandHandler', () => {
     });
 
     it('status with invalid ticket', async () => {
-        const options = {
-            'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue/ABC`,
-            'headers': {
-                'Authorization': process.env.JIRA_AUTH,
-                'Accept': 'application/json'
-            },
-            json: true
-        };
+    
         const statusEmbed = new MessageEmbed({
             type: 'rich',
             title: 'Invalid Ticket or Permission is denied!',
@@ -123,7 +109,7 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        mockStub.withArgs(options, 'get').returns(mockResponse.invalidTicket);
+        mockStub.withArgs('ABC').returns(mockResponse.invalidTicket);
         const returnVal = await command.execute(mockedMessageInstance, ['ABC'], client['prefix']);
         delete returnVal['timestamp'];
         delete statusEmbed.timestamp;
