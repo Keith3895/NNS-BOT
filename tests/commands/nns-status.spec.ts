@@ -30,7 +30,7 @@ describe('StatusCommandHandler', () => {
         mckTextChannel = mock(TextChannel);
         mockedMessageInstance.channel = instance(mckTextChannel);
         jira = new Jira();
-        mockStub = sandbox.stub(jira, 'getTicketStatus');
+        mockStub = sandbox.stub(jira, 'returnAwait');
         command = new StatusCommand(jira);
     });
     afterEach(() => {
@@ -38,7 +38,7 @@ describe('StatusCommandHandler', () => {
     });
     it('status without arguments', async () => {
 
-        const helpEmbed = new MessageEmbed({
+        const statusEmbed = new MessageEmbed({
             type: 'rich',
             title: 'JIRA Ticket Status',
             description: 'Displays the status of the entered JIRA Ticket.',
@@ -58,12 +58,20 @@ describe('StatusCommandHandler', () => {
         });
         const returnVal = await command.execute(mockedMessageInstance, null, client['prefix']);
         delete returnVal['timestamp'];
-        delete helpEmbed.timestamp;
-        expect(returnVal).to.deep.equal(helpEmbed);
+        delete statusEmbed.timestamp;
+        expect(returnVal).to.deep.equal(statusEmbed);
     });
 
     it('status with valid ticket', async () => {
-        const helpEmbed = new MessageEmbed({
+        const options = {
+            'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue/MO-49`,
+            'headers': {
+                'Authorization': process.env.JIRA_AUTH,
+                'Accept': 'application/json'
+            },
+            json: true
+        };
+        const statusEmbed = new MessageEmbed({
             type: 'rich',
             title: 'MPIG_OMNI',
             description: 'Touh ID popup',
@@ -83,15 +91,23 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        mockStub.withArgs('MO-49').returns(mockResponse.validTicket);
+        mockStub.withArgs(options, 'get').returns(mockResponse.validTicket);
         const returnVal = await command.execute(mockedMessageInstance, ['MO-49'], client['prefix']);
         delete returnVal['timestamp'];
-        delete helpEmbed.timestamp;
-        expect(returnVal).to.deep.equals(helpEmbed);
+        delete statusEmbed.timestamp;
+        expect(returnVal).to.deep.equals(statusEmbed);
     });
 
     it('status with invalid ticket', async () => {
-        const helpEmbed = new MessageEmbed({
+        const options = {
+            'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue/ABC`,
+            'headers': {
+                'Authorization': process.env.JIRA_AUTH,
+                'Accept': 'application/json'
+            },
+            json: true
+        };
+        const statusEmbed = new MessageEmbed({
             type: 'rich',
             title: 'Invalid Ticket or Permission is denied!',
             description: 'Issue does not exist or you do not have permission to see it.',
@@ -107,10 +123,10 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        mockStub.withArgs('ABC').returns(mockResponse.invalidTicket);
+        mockStub.withArgs(options, 'get').returns(mockResponse.invalidTicket);
         const returnVal = await command.execute(mockedMessageInstance, ['ABC'], client['prefix']);
         delete returnVal['timestamp'];
-        delete helpEmbed.timestamp;
-        expect(returnVal).to.deep.equals(helpEmbed);
+        delete statusEmbed.timestamp;
+        expect(returnVal).to.deep.equals(statusEmbed);
     });
 });

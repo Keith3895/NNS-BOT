@@ -18,7 +18,15 @@ export class StatusCommand {
         if (args && args.length > 0) {
 
             try {
-                jiraResponse = await this.jiraApiHandler.getTicketStatus(args[0]);
+                const options = {
+                    'url': `https://${process.env.JIRA_HOST}/rest/api/3/issue/${args[0]}`,
+                    'headers': {
+                        'Authorization': process.env.JIRA_AUTH,
+                        'Accept': 'application/json'
+                    },
+                    json: true
+                };
+                jiraResponse = await this.jiraApiHandler.returnAwait(options, 'get');
 
                 if (jiraResponse && jiraResponse.hasOwnProperty('errorMessages')) {
                     statusEmbed.setColor('#FF0000')
@@ -32,12 +40,12 @@ export class StatusCommand {
                         .setURL(`${jiraResponse['fields'].project.self}`)
                         .setDescription(`${jiraResponse['fields'].summary}`)
                         .setTimestamp();
-                        statusEmbed.addField('Assignee', jiraResponse['fields'].assignee
+                    statusEmbed.addField('Assignee', jiraResponse['fields'].assignee
                         ? `${jiraResponse['fields'].assignee.displayName}`
                         : 'Not Assigned', true);
                     if (jiraResponse['fields'].reporter
                         && jiraResponse['fields'].reporter.hasOwnProperty('displayName')) {
-                            statusEmbed.addField('Reporter', `${jiraResponse['fields'].reporter.displayName}`, true);
+                        statusEmbed.addField('Reporter', `${jiraResponse['fields'].reporter.displayName}`, true);
                     }
                     statusEmbed.addField('Status', `${jiraResponse['fields'].status.name}`, false);
                 }

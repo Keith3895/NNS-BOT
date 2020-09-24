@@ -95,7 +95,7 @@ describe('Assist Handler', () => {
             footer: null,
             files: []
         });
-        sandbox.stub(assist.jiraApiHandler, 'searchIssue').resolves(mockResponse.searchSuccessObj);
+        sandbox.stub(assist.jiraApiHandler, 'returnAwait').resolves(mockResponse.searchSuccessObj);
         const searchresult = await assist.execute(mockedMessageInstance, ['MO-49'], client['prefix']);
         delete searchresult['timestamp'];
         delete assistEmbed.timestamp;
@@ -103,7 +103,7 @@ describe('Assist Handler', () => {
     });
 
     it('Search Isuue : No Issues Found', async () => {
-        sandbox.stub(assist.jiraApiHandler, 'searchIssue').resolves(mockResponse.searchFailure);
+        sandbox.stub(assist.jiraApiHandler, 'returnAwait').resolves(mockResponse.searchFailure);
         const searchresult = await assist.execute(mockedMessageInstance, ['abc'], client['prefix']);
         expect(searchresult).to.deep.equals('Issue Does not exists');
     });
@@ -125,7 +125,7 @@ describe('Assist Handler', () => {
             footer: null,
             files: []
         });
-        sandbox.stub(assist.jiraApiHandler, 'searchIssue').resolves(mockResponse.searchError);
+        sandbox.stub(assist.jiraApiHandler, 'returnAwait').resolves(mockResponse.searchError);
         const searchresult = await assist.execute(mockedMessageInstance, ['~help'], client['prefix']);
         delete searchresult['timestamp'];
         delete assistEmbed.timestamp;

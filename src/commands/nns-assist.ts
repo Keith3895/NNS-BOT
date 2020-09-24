@@ -9,6 +9,7 @@ export class AssistCommand {
     readonly description: string = `Displays  the comprehensive information of entered title/description/JIRA ticket.`;
     readonly man: string = `!nns.assist followed by  title/description/ticket reference  to get information of issues.`;
     readonly cooldown = 9000;
+
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
 
@@ -34,7 +35,16 @@ export class AssistCommand {
             try {
                 filterQuery = this.prepareSearchFilter(args);
                 searchObj = Object.assign(searchObj, { 'jql': filterQuery });
-                jiraResp = await this.jiraApiHandler.searchIssue(searchObj);
+                const options = {
+                    'url': `https://${process.env.JIRA_HOST}/rest/api/3/search`,
+                    'headers': {
+                        'Authorization': process.env.JIRA_AUTH,
+                        'Accept': 'application/json'
+                    },
+                    json: true,
+                    body: searchObj
+                };
+                jiraResp = await this.jiraApiHandler.returnAwait(options, 'post');
                 if (jiraResp && jiraResp.errorMessages) {
                     assistEmbed.setColor('#FF0000')
                         .setTitle(`Invalid Search Key`)
@@ -58,7 +68,8 @@ export class AssistCommand {
                     return assistEmbed;
                 }
                 if (jiraResp && jiraResp.issues && jiraResp.issues.length === 0) {
-                    message.reply('The entered issue does not exists. Do you want to create one? If Yes, Please use !nns.bug command to raise the ticket');
+                    message.reply(`The entered issue does not exists.
+                                   Do you want to create one? If Yes, Please use !nns.bug command to raise the ticket`);
                     return 'Issue Does not exists';
                 }
             } catch (e) {
