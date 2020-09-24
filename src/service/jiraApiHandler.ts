@@ -55,7 +55,7 @@ export default class Jira {
     }
 
     public searchIssue = async (searchText) => {
-        let searchObj = {
+        const searchObj = {
             'maxResults': 15,
             'fieldsByKeys': false,
             'fields': [
