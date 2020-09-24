@@ -54,6 +54,10 @@ export default class Jira {
         }
     }
 
+    /**
+     * Does a look up on JIRA For entered text/ticketref 
+     * @param searchText : free text/description or ticket reference
+     */
     public searchIssue = async (searchText) => {
         const searchObj = {
             'maxResults': 15,
@@ -82,7 +86,10 @@ export default class Jira {
             return error;
         }
     }
-
+    /**
+     * This method prepares the JQL query and return a JQL Query string
+     * @param searchText String
+     */
     public createJQLFilter = (searchText) => {
         if (typeof searchText !== 'string')
             return new Error('Invaid String');
