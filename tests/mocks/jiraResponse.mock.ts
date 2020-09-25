@@ -162,5 +162,43 @@ export default class MockResponse {
         'id': '23156',
         'key': 'PROJ-36',
         'self': 'https://your-domain.atlassian.net/rest/api/3/issue/23156'
-    }
+    };
+    public readonly searchSuccessObj = {
+        expand: 'schema,names',
+        startAt: 0,
+        maxResults: 15,
+        total: 3,
+        issues: [
+            {
+                expand: 'renderedFields,names,schema,operations,editmeta',
+                id: '16996',
+                key: 'MO-49',
+                fields: {
+                    summary: 'Touh ID popup',
+                    project: {
+                        self: 'https://jatahworx.atlassian.net/rest/api/3/project/10345',
+                        id: '10345',
+                        key: 'MO',
+                        name: 'MPIG_OMNI',
+                        projectTypeKey: 'software',
+                        simplified: false,
+                        avatarUrls: [Object]
+                    }
+                }
+            }]
+
+    };
+    public readonly searchFailure = {
+        startAt: 0,
+        maxResults: 15,
+        total: 0,
+        issues: []
+    };
+
+    public readonly searchError = {
+        errorMessages: ['Unable to parse the text \'~help\' for field \'summary\'.'],
+        warningMessages: []
+    };
+
+
 }

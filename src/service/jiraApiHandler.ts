@@ -1,9 +1,8 @@
-import * as request from 'request';
+import { httpRequest } from './utils';
 
 export default class Jira {
     private readonly host: string;
     private readonly jiraAuth: string;
-
 
     constructor() {
         this.host = process.env.JIRA_HOST;
@@ -13,27 +12,22 @@ export default class Jira {
     /**
      * @param ticket accepts the ticket number along with project key(MO-1)
      */
-    getTicketStatus = (ticket: string) => {
+    getTicketStatus = async (ticket: string) => {
         const options = {
             'url': `https://${this.host}/rest/api/3/issue/${ticket}`,
             'headers': {
                 'Authorization': this.jiraAuth,
                 'Accept': 'application/json'
-            }
+            },
+            json: true
         };
-        return new Promise((resolve, reject) => {
-            request.get(options, (err, res, body) => {
-                if (err)
-                    reject('API Failed');
-                try {
-                    body = JSON.parse(body);
-                }
-                catch (e) {
-                    reject('JSON Parse Error');
-                }
-                resolve(body);
-            });
-        });
+        try {
+            return await httpRequest(options, 'get');
+        }
+        catch (error) {
+            return error;
+        }
+
     }
 
 
@@ -42,7 +36,7 @@ export default class Jira {
      * @param issueObj : Config Object of the issue
      * @param attachments  : Attachments if any
      */
-    public createIssue(issueObj, attachments?: []) {
+    public createIssue = async (issueObj, attachments?: []) => {
         const options = {
             'url': `https://${this.host}/rest/api/3/issue`,
             'headers': {
@@ -52,15 +46,61 @@ export default class Jira {
             json: true,
             body: issueObj
         };
-        return new Promise((resolved, rejected) => {
-            request.post(options, (err, res, body) => {
-                if (err) {
-                    return rejected('API Failed');
-                }
-                if (body) {
-                    return resolved(body);
-                }
-            });
-        });
+        try {
+            return await httpRequest(options, 'post');
+        }
+        catch (error) {
+            return error;
+        }
+    }
+
+    /**
+     * Does a look up on JIRA For entered text/ticketref 
+     * @param searchText : free text/description or ticket reference
+     */
+    public searchIssue = async (searchText) => {
+        const searchObj = {
+            'maxResults': 15,
+            'fieldsByKeys': false,
+            'fields': [
+                'summary',
+                'status',
+                'assignee',
+                'reporter',
+                'project'],
+            'startAt': 0
+        };
+        try {
+            const options = {
+                'url': `https://${this.host}/rest/api/3/search`,
+                'headers': {
+                    'Authorization': this.jiraAuth,
+                    'Accept': 'application/json'
+                },
+                json: true,
+                body: Object.assign(searchObj, { 'jql': this.createJQLFilter(searchText) })
+            };
+            return await httpRequest(options, 'post');
+        }
+        catch (error) {
+            return error;
+        }
+    }
+    /**
+     * This method prepares the JQL query and return a JQL Query string
+     * @param searchText String
+     */
+    public createJQLFilter = (searchText) => {
+        if (typeof searchText !== 'string')
+            return new Error('Invaid String');
+        const issueKeys = searchText.match(/((?!([A-Z0-9a-z]{1,10})-?$)[A-Z]{1}[A-Z0-9]+-\d+)/g);
+        let filterQuery = `project = ${process.env.PROJECT_ID} AND `;
+        if (issueKeys && issueKeys.length > 0) {
+            filterQuery += 'issueKey IN (keys)';
+            filterQuery = filterQuery.replace(/keys/ig, '\'' + issueKeys.join('\',\'') + '\'');
+        }
+        else
+            filterQuery += `summary ~ \'${searchText}\'`;
+        return filterQuery;
     }
 }

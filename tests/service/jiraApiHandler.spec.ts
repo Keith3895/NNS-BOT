@@ -49,16 +49,49 @@ describe('JIRA API Handler', () => {
             done();
         });
     });
-
-    it('JIRA Create Issue : Failute', (done) => {
+    it('JIRA Create Issue : Failure', (done) => {
         const issueStub = sandbox.stub(request, 'post');
         issueStub.yields(new Error());
-        jira.createIssue({}).catch(err => {
+        jira.createIssue({}).then(respo => {
+            done();
+        }).catch(err => {
             expect(err).to.equal('API Failed');
             done();
         });
     });
+    it('JQL filter: issueKey ', (done) => {
+        const mockResp = `project = ${process.env.PROJECT_ID} AND issueKey IN (\'MO-49\')`;
+        jira.createJQLFilter('MO-49');
+        const filterQuery = jira.createJQLFilter('MO-49');
+        expect(filterQuery).equals(mockResp);
+        done();
+    });
+    it('JQL filter: Summary', (done) => {
+        const mockResp = `project = ${process.env.PROJECT_ID} AND summary ~ \'abc\'`;
+        const filterQuery = jira.createJQLFilter('abc');
+        expect(filterQuery).equals(mockResp);
+        done();
+    });
+    it('JIRA Search Issue : Success', (done) => {
+        const searchStub = sandbox.stub(request, 'post');
+        searchStub.yields(null, null, mockResponse.searchSuccessObj);
+        jira.searchIssue('touch id').then(result => {
+            expect(result).to.have.property('issues');
+            done();
+        });
+    });
 
+    it('Jira Search Issue: Invalid String', (done) => {
+        const issueStub = sandbox.stub(request, 'post');
+        issueStub.yields(new Error());
+        jira.searchIssue({}).then(respo => {
+            done();
+        }).catch(err => {
+            expect(err).to.equal('API Failed');
+            done();
+        });
+    });
 });
+
 
 

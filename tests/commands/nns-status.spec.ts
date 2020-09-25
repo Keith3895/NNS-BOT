@@ -2,13 +2,13 @@ import { config } from 'dotenv';
 config();
 import 'mocha';
 import { expect } from 'chai';
-import { Client, TextChannel, Message, MessageEmbed} from 'discord.js';
-import { instance, mock} from 'ts-mockito';
+import { Client, TextChannel, Message, MessageEmbed } from 'discord.js';
+import { instance, mock } from 'ts-mockito';
 import { StatusCommand } from '../../src/commands';
 import Jira from '../../src/service/jiraApiHandler';
 import * as sinon from 'sinon';
 import MockResponse from '../mocks/jiraResponse.mock';
-
+import { httpRequest } from '../../src/service/utils';
 
 describe('StatusCommandHandler', () => {
     let mockedMessageClass: Message;
@@ -38,7 +38,7 @@ describe('StatusCommandHandler', () => {
     });
     it('status without arguments', async () => {
 
-        const helpEmbed = new MessageEmbed({
+        const statusEmbed = new MessageEmbed({
             type: 'rich',
             title: 'JIRA Ticket Status',
             description: 'Displays the status of the entered JIRA Ticket.',
@@ -56,14 +56,15 @@ describe('StatusCommandHandler', () => {
             footer: null,
             files: []
         });
-        const returnVal = await command.execute(mockedMessageInstance, null, client['prefix'], commandsList);
+        const returnVal = await command.execute(mockedMessageInstance, null, client['prefix']);
         delete returnVal['timestamp'];
-        delete helpEmbed.timestamp;
-        expect(returnVal).to.deep.equal(helpEmbed);
+        delete statusEmbed.timestamp;
+        expect(returnVal).to.deep.equal(statusEmbed);
     });
 
     it('status with valid ticket', async () => {
-        const helpEmbed = new MessageEmbed({
+
+        const statusEmbed = new MessageEmbed({
             type: 'rich',
             title: 'MPIG_OMNI',
             description: 'Touh ID popup',
@@ -84,14 +85,15 @@ describe('StatusCommandHandler', () => {
             files: []
         });
         mockStub.withArgs('MO-49').returns(mockResponse.validTicket);
-        const returnVal = await command.execute(mockedMessageInstance, ['MO-49'], client['prefix'], null);
+        const returnVal = await command.execute(mockedMessageInstance, ['MO-49'], client['prefix']);
         delete returnVal['timestamp'];
-        delete helpEmbed.timestamp;
-        expect(returnVal).to.deep.equals(helpEmbed);
+        delete statusEmbed.timestamp;
+        expect(returnVal).to.deep.equals(statusEmbed);
     });
 
     it('status with invalid ticket', async () => {
-        const helpEmbed = new MessageEmbed({
+    
+        const statusEmbed = new MessageEmbed({
             type: 'rich',
             title: 'Invalid Ticket or Permission is denied!',
             description: 'Issue does not exist or you do not have permission to see it.',
@@ -108,10 +110,9 @@ describe('StatusCommandHandler', () => {
             files: []
         });
         mockStub.withArgs('ABC').returns(mockResponse.invalidTicket);
-        const returnVal = await command.execute(mockedMessageInstance, ['ABC'], client['prefix'], null);
+        const returnVal = await command.execute(mockedMessageInstance, ['ABC'], client['prefix']);
         delete returnVal['timestamp'];
-        delete helpEmbed.timestamp;
-        expect(returnVal).to.deep.equals(helpEmbed);
+        delete statusEmbed.timestamp;
+        expect(returnVal).to.deep.equals(statusEmbed);
     });
- 
 });
