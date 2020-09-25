@@ -175,7 +175,7 @@ describe('Bug Creation Handler', () => {
         sandbox.stub(bug['jiraApiHandler'], 'createIssue').returns(Promise.reject());
         sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
         bug.execute(mockedMessageInstance).then(result => {
-            expect(bug.creationFailed).to.equal(true);
+            expect(result['error']).to.equal(true);
         });
         done();
     });

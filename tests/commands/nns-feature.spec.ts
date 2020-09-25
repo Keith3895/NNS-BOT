@@ -176,7 +176,7 @@ describe('Feature Creation Handler', () => {
         sandbox.stub(feature['jiraApiHandler'], 'createIssue').returns(Promise.reject());
         sinon.stub(feature, 'initaiteCollector').returns(Promise.resolve(bugObject));
         feature.execute(mockedMessageInstance).then(result => {
-            expect(feature.creationFailed).to.equal(true);
+            expect(result['error']).to.equal(true);
         });
         done();
     });

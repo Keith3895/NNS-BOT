@@ -37,6 +37,11 @@ export default class Jira {
      * @param attachments  : Attachments if any
      */
     public createIssue = async (issueObj, attachments?: []) => {
+        let reqObj = this.issueObj;
+        reqObj.fields.issuetype.name = issueObj['issuetype'];
+        reqObj.fields.summary = issueObj['summary'];
+        reqObj.fields.description.content[0].content[0].text = issueObj['description'];
+        reqObj.fields.priority.name = issueObj['priority'] || 'Medium';
         const options = {
             'url': `https://${this.host}/rest/api/3/issue`,
             'headers': {
@@ -44,7 +49,7 @@ export default class Jira {
                 'Accept': 'application/json'
             },
             json: true,
-            body: issueObj
+            body: reqObj
         };
         try {
             return await httpRequest(options, 'post');
@@ -55,7 +60,7 @@ export default class Jira {
     }
 
     /**
-     * Does a look up on JIRA For entered text/ticketref 
+     * Does a look up on JIRA For entered text/ticketref
      * @param searchText : free text/description or ticket reference
      */
     public searchIssue = async (searchText) => {
@@ -103,4 +108,38 @@ export default class Jira {
             filterQuery += `summary ~ \'${searchText}\'`;
         return filterQuery;
     }
+
+
+    public issueObj = {
+        'fields': {
+            'summary': 'NA',
+            'issuetype': {
+                'name': 'Bug'
+            },
+            'project': {
+                'id': process.env.PROJECT_ID
+            },
+            'priority': {
+                'name': 'Medium'
+            },
+            'description': {
+                'type': 'doc',
+                'version': 1,
+                'content': [
+                    {
+                        'type': 'paragraph',
+                        'content': [
+                            {
+                                'text': 'sample Description',
+                                'type': 'text'
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    };
+
+
 }
+

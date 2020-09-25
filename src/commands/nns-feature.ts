@@ -7,7 +7,6 @@ export class FeatureCommand {
     readonly alias: string = 'feature';
     private jiraApiHandler: Jira;
     readonly timeoutDuration: number = 120000;
-    public creationFailed = false;
     readonly description: string = `Initaites feature creation flow`;
     readonly man: string = `!nns.feature followed by the responses for queries creates an feature`;
     constructor(jiraApiHandler?: Jira) {
@@ -26,33 +25,10 @@ export class FeatureCommand {
             if (res['confirm'] && (res['confirm'].toLowerCase() === 'y' || res['confirm'].toLowerCase() === 'yes')) {
                 // Call JIRA create issue API
                 const featureObj = {
-                    'fields': {
-                        'summary': res['title'] || 'NA',
-                        'issuetype': {
-                            'name': 'Story'
-                        },
-                        'project': {
-                            'id': process.env.PROJECT_ID
-                        },
-                        'priority': {
-                            'name':  'Medium'
-                        },
-                        'description': {
-                            'type': 'doc',
-                            'version': 1,
-                            'content': [
-                                {
-                                    'type': 'paragraph',
-                                    'content': [
-                                        {
-                                            'text': res['description'],
-                                            'type': 'text'
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
+                    'summary' : res['title'],
+                    'issuetype': 'Story',
+                    'description' : res['description'],
+                    'priority' : 'Medium'
                 };
                 this.jiraApiHandler.createIssue(featureObj).then((result: object) => {
                     // Send success Embed
@@ -63,7 +39,7 @@ export class FeatureCommand {
                     this.respondResultEmbed(resultObject, message);
                 }).catch(err => {
                     message.reply('Feature creation failed . Please retry');
-                    this.creationFailed = true;
+                    res['error'] = true;
                     return new Error('Feature creation failed');
                 });
             } else {

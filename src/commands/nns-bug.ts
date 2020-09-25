@@ -7,7 +7,6 @@ export class BugCommand {
     readonly alias: string = 'bug';
     private jiraApiHandler: Jira;
     readonly timeoutDuration: number = 120000;
-    public creationFailed = false;
     readonly description: string = `Initaites bug creation flow`;
     readonly man: string = `!nns.bug followed by the responses for queries creates an bug`;
     constructor(jiraApiHandler?: Jira) {
@@ -27,33 +26,10 @@ export class BugCommand {
             if (res['confirm'] && (res['confirm'].toLowerCase() === 'y' || res['confirm'].toLowerCase() === 'yes')) {
                 // Call JIRA create issue API
                 const bugObj = {
-                    'fields': {
-                        'summary': res['title'] || 'NA',
-                        'issuetype': {
-                            'name': 'Bug'
-                        },
-                        'project': {
-                            'id': process.env.PROJECT_ID
-                        },
-                        'priority': {
-                            'name': res['severity'] || 'Medium'
-                        },
-                        'description': {
-                            'type': 'doc',
-                            'version': 1,
-                            'content': [
-                                {
-                                    'type': 'paragraph',
-                                    'content': [
-                                        {
-                                            'text': res['description'],
-                                            'type': 'text'
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
+                    'summary' : res['title'],
+                    'issuetype': 'Bug',
+                    'description' : res['description'],
+                    'priority' : res['severity']
                 };
                 this.jiraApiHandler.createIssue(bugObj).then((result: object) => {
                     // Send success Embed
@@ -64,7 +40,7 @@ export class BugCommand {
                     this.respondResultEmbed(resultObject, message);
                 }).catch(err => {
                     message.reply('Bug creation failed . Please retry');
-                    this.creationFailed = true;
+                    res['error'] = true;
                     return new Error('Bug creation failed');
                 });
             } else {
