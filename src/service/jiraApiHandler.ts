@@ -37,11 +37,11 @@ export default class Jira {
      * @param attachments  : Attachments if any
      */
     public createIssue = async (issueObj, attachments?: []) => {
-        let reqObj = this.issueObj;
-        reqObj.fields.issuetype.name = issueObj['issuetype'];
-        reqObj.fields.summary = issueObj['summary'];
-        reqObj.fields.description.content[0].content[0].text = issueObj['description'];
-        reqObj.fields.priority.name = issueObj['priority'] || 'Medium';
+        let reqObj = Object.assign({}, this.issueObj);
+        reqObj['fields']['issuetype']['name'] = issueObj['issuetype'];
+        reqObj['fields']['summary'] = issueObj['summary'];
+        reqObj['fields']['description']['content'][0]['content'][0]['text'] = issueObj['description'];
+        reqObj['fields']['priority']['name'] = issueObj['priority'] || 'Medium';
         const options = {
             'url': `https://${this.host}/rest/api/3/issue`,
             'headers': {
@@ -110,7 +110,7 @@ export default class Jira {
     }
 
 
-    public issueObj = {
+    private issueObj = {
         'fields': {
             'summary': 'NA',
             'issuetype': {
