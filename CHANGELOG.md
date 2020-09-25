@@ -7,3 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 13-Sep-2020
 ### Added
 - Support for `!nns.help` command. #12
+- Support for `!nns.status` command. #22
+- Support for `!nns.bug` command. #14
+- Support for `!nns.assist` command. #31
