@@ -132,38 +132,5 @@ export default class Jira {
             filterQuery += `summary ~ \'${searchText}\'`;
         return filterQuery;
     }
-
-
-    private issueObj = {
-        'fields': {
-            'summary': 'NA',
-            'issuetype': {
-                'name': 'Bug'
-            },
-            'project': {
-                'id': process.env.PROJECT_ID
-            },
-            'priority': {
-                'name': 'Medium'
-            },
-            'description': {
-                'type': 'doc',
-                'version': 1,
-                'content': [
-                    {
-                        'type': 'paragraph',
-                        'content': [
-                            {
-                                'text': 'sample Description',
-                                'type': 'text'
-                            }
-                        ]
-                    }
-                ]
-            }
-        }
-    };
-
-
 }
 
