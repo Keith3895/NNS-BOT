@@ -200,5 +200,34 @@ export default class MockResponse {
         warningMessages: []
     };
 
+    public issueObj = {
+        'fields': {
+            'summary': 'NA',
+            'issuetype': {
+                'name': 'Bug'
+            },
+            'project': {
+                'id': 'project_id'
+            },
+            'priority': {
+                'name':  'Medium'
+            },
+            'description': {
+                'type': 'doc',
+                'version': 1,
+                'content': [
+                    {
+                        'type': 'paragraph',
+                        'content': [
+                            {
+                                'text': 'sample Description',
+                                'type': 'text'
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    };
 
 }

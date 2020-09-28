@@ -1,14 +1,14 @@
 import { Message, MessageEmbed } from 'discord.js';
 import Jira from '../service/jiraApiHandler';
-const ITERATOR_LIMIT = 4;
-export class BugCommand {
+const ITERATOR_LIMIT = 3;
+export class FeatureCommand {
 
-    readonly name: string = 'bug';
-    readonly alias: string = 'bug';
+    readonly name: string = 'feature';
+    readonly alias: string = 'feature';
     private jiraApiHandler: Jira;
     readonly timeoutDuration: number = 120000;
-    readonly description: string = `Initaites bug creation flow`;
-    readonly man: string = `!nns.bug followed by the responses for queries creates an bug`;
+    readonly description: string = `Initaites feature creation flow`;
+    readonly man: string = `!nns.feature followed by the responses for queries creates an feature`;
     constructor(jiraApiHandler?: Jira) {
         this.jiraApiHandler = jiraApiHandler || new Jira();
     }
@@ -16,22 +16,21 @@ export class BugCommand {
     execute(message: Message) {
 
         const filter = m => m.author.id === message.author.id;
-        const bugQueries = ['Bug Initation Started',
-            'Please enter the bug description ..!',
-            'Please enter bug severity ..!',
-            'Please confirm the above bug . Reply Yes , if ok , else No'];
+        const featureQueries = ['Feature Initaition',
+            'Please enter feature description',
+            'Please confirm the above feature . Reply Yes , if ok , else No'];
         const iterator = 1;
-        message.reply('Please enter the bug title in 10 seconds ...!');
-        return this.initaiteCollector(filter, message, bugQueries, this.timeoutDuration, iterator).then(res => {
+        message.reply('Please enter feature title');
+        return this.initaiteCollector(filter, message, featureQueries, this.timeoutDuration, iterator).then(res => {
             if (res['confirm'] && (res['confirm'].toLowerCase() === 'y' || res['confirm'].toLowerCase() === 'yes')) {
                 // Call JIRA create issue API
-                const bugObj = {
+                const featureObj = {
                     'summary' : res['title'],
-                    'issuetype': 'Bug',
+                    'issuetype': 'Story',
                     'description' : res['description'],
-                    'priority' : res['severity']
+                    'priority' : 'Medium'
                 };
-                this.jiraApiHandler.createIssue(bugObj).then((result: object) => {
+                this.jiraApiHandler.createIssue(featureObj).then((result: object) => {
                     // Send success Embed
                     const resultObject = {
                         ...result,
@@ -39,12 +38,12 @@ export class BugCommand {
                     };
                     this.respondResultEmbed(resultObject, message);
                 }).catch(err => {
-                    message.reply('Bug creation failed . Please retry');
+                    message.reply('Feature creation failed . Please retry');
                     res['error'] = true;
-                    return new Error('Bug creation failed');
+                    return new Error('Feature creation failed');
                 });
             } else {
-                message.reply('Bug creation cancelled');
+                message.reply('Feature creation cancelled');
             }
             return res;
         }).catch(err => {
@@ -63,7 +62,7 @@ export class BugCommand {
      */
     public initaiteCollector(filter, message: Message, replyContent: string[], timeout: number, iterator, bug = {}) {
         return this.awaitMessenger(filter, message, replyContent, timeout, iterator).then(res => {
-            const keys = ['title', 'description', 'severity', 'confirm'];
+            const keys = ['title', 'description', 'confirm'];
             bug[keys[iterator - 1]] = res['collected'].first().content;
             iterator++;
             if (res['done']) {
@@ -114,23 +113,18 @@ export class BugCommand {
      */
     private respondResultEmbed(embedObj, message: Message) {
         const projectName = embedObj['key'].split('-')[0];
-        const bugUrl = `https://${process.env.JIRA_HOST}/browse/${embedObj['key']}`;
-        const bugEmbed = new MessageEmbed();
-        bugEmbed.setColor('#DA0317')
+        const featureUrl = `https://${process.env.JIRA_HOST}/browse/${embedObj['key']}`;
+        const featureEmbed = new MessageEmbed();
+        featureEmbed.setColor('#05A7F5')
             .setTitle(embedObj['title'])
-            .setAuthor(embedObj['key'], 'attachment://project.png', bugUrl)
+            .setAuthor(embedObj['key'], 'attachment://project.png', featureUrl)
             .setDescription(embedObj['description'])
-            .setThumbnail('attachment://bug.png')
-            .addFields(
-                { name: '\u200B', value: '\u200B' },
-                { name: 'Priority', value: embedObj['severity'], inline: true },
-                { name: '\u200B', value: '\u200B' }
-            )
-            .attachFiles(['./src/assets/bug.png'])
+            .setThumbnail('attachment://story.jpg')
+            .attachFiles(['./src/assets/story.jpg'])
             .attachFiles(['./src/assets/project.png'])
             .setTimestamp()
-            .setFooter(projectName, 'attachment://bug.png');
-        message.channel.send(bugEmbed);
-        return bugEmbed;
+            .setFooter(projectName, 'attachment://story.jpg');
+        message.channel.send(featureEmbed);
+        return featureEmbed;
     }
 }

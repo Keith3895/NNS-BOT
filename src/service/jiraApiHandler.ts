@@ -37,6 +37,35 @@ export default class Jira {
      * @param attachments  : Attachments if any
      */
     public createIssue = async (issueObj, attachments?: []) => {
+        const reqObj = {
+            'fields': {
+                'summary': issueObj['summary'],
+                'issuetype': {
+                    'name': issueObj['issuetype']
+                },
+                'project': {
+                    'id': process.env.PROJECT_ID
+                },
+                'priority': {
+                    'name': issueObj['priority'] || 'Medium'
+                },
+                'description': {
+                    'type': 'doc',
+                    'version': 1,
+                    'content': [
+                        {
+                            'type': 'paragraph',
+                            'content': [
+                                {
+                                    'text': issueObj['description'],
+                                    'type': 'text'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        };
         const options = {
             'url': `https://${this.host}/rest/api/3/issue`,
             'headers': {
@@ -44,7 +73,7 @@ export default class Jira {
                 'Accept': 'application/json'
             },
             json: true,
-            body: issueObj
+            body: reqObj
         };
         try {
             return await httpRequest(options, 'post');
@@ -55,7 +84,7 @@ export default class Jira {
     }
 
     /**
-     * Does a look up on JIRA For entered text/ticketref 
+     * Does a look up on JIRA For entered text/ticketref
      * @param searchText : free text/description or ticket reference
      */
     public searchIssue = async (searchText) => {
@@ -104,3 +133,4 @@ export default class Jira {
         return filterQuery;
     }
 }
+

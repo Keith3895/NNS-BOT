@@ -4,11 +4,11 @@ import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { Client, TextChannel, Message, User, Collection } from 'discord.js';
 import { instance, mock } from 'ts-mockito';
-import { BugCommand } from '../../src/commands';
+import { FeatureCommand } from '../../src/commands';
 import CommandHandler from '../../src/service/commandHandler';
 import MockResponse from '../mocks/jiraResponse.mock';
 
-describe('Bug Creation Handler', () => {
+describe('Feature Creation Handler', () => {
     let client: Client;
     let mockedMessageClass: Message;
     let mockedMessageInstance: Message;
@@ -17,8 +17,11 @@ describe('Bug Creation Handler', () => {
     let mockedClientInstance;
     let mockedClientClass;
     let mockResponse: MockResponse;
+    const timeoutDuration = 2500;
+    const iteration_start = 1;
+    const iteration_end = 3;
     const sandbox = sinon.createSandbox();
-    let bug ;
+    let feature ;
     beforeEach(() => {
         client = new Client();
         client['prefix'] = process.env.PREFIX;
@@ -31,36 +34,34 @@ describe('Bug Creation Handler', () => {
         mockedMessageInstance.channel = instance(mckTextChannel);
         mockedMessageInstance['author'] = new User(mockedClientInstance, { bot: false, id: 'test' });
         mockResponse = new MockResponse();
-        bug = new BugCommand();
+        feature = new FeatureCommand();
     });
 
     afterEach(() => {
         sandbox.restore();
     });
 
-    it('Bug Command Initiate : Success', async (done) => {
+    it('Feature Command Initiate : Success', async (done) => {
         const bugObject = {
-            title: 'Date Picker',
-            description: 'Format Incorrect',
-            severity: 'High',
+            title: 'Login Page',
+            description: 'Login page with validations',
             confirm: 'Yes'
         };
-        mockedMessageInstance.content = '!nns.bug';
-        mockedMessageInstance.reply('Please enter the bug title in 10 seconds ...!');
-        sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
-        bug.execute(mockedMessageInstance).then(result => {
-            expect(result['title']).to.equal('Date Picker');
-            expect(result['description']).to.equal('Format Incorrect');
-            expect(result['severity']).to.equal('High');
+        mockedMessageInstance.content = '!nns.feature';
+        mockedMessageInstance.reply('Please enter feature title');
+        sinon.stub(feature, 'initaiteCollector').returns(Promise.resolve(bugObject));
+        feature.execute(mockedMessageInstance).then(result => {
+            expect(result['title']).to.equal('Login Page');
+            expect(result['description']).to.equal('Login page with validations');
             expect(result['confirm']).to.equal('Yes');
         });
         done();
     });
 
-    it('Bug Command Initiate : Failure', (done) => {
-        mockedMessageInstance.content = '!nns.bug';
-        sinon.stub(bug, 'initaiteCollector').returns(Promise.reject(new Error('Initiate Failed')));
-        bug.execute(mockedMessageInstance).catch(err => {
+    it('Feature Command Initiate : Failure', (done) => {
+        mockedMessageInstance.content = '!nns.feature';
+        sinon.stub(feature, 'initaiteCollector').returns(Promise.reject(new Error('Initiate Failed')));
+        feature.execute(mockedMessageInstance).catch(err => {
             expect(err['message']).to.equal('Initiate Failed');
         });
         done();
@@ -72,7 +73,7 @@ describe('Bug Creation Handler', () => {
         const collected = new Collection();
         collected.set(mockedMessageInstance.author.id, mockedMessageInstance);
         sinon.stub(mockedMessageInstance.channel, 'awaitMessages').returns(Promise.resolve(collected));
-        bug.awaitMessenger(filter, mockedMessageInstance, ['sd'], 1000, 1).then(res => {
+        feature.awaitMessenger(filter, mockedMessageInstance, ['sd'], timeoutDuration, iteration_start).then(res => {
             expect(res['collected'].first().content).to.equal('Bingo..!');
         });
         done();
@@ -82,7 +83,8 @@ describe('Bug Creation Handler', () => {
         const filter = m => m.author.id === mockedMessageInstance.author.id;
         sinon.stub(mockedMessageInstance.channel, 'awaitMessages')
             .returns(Promise.reject(new Error('Oops. Please retry from start')));
-        bug.awaitMessenger(filter, mockedMessageInstance, ['sd'], 1000, 1).catch(err => {
+            feature.awaitMessenger(filter, mockedMessageInstance, ['sd'], timeoutDuration, iteration_start)
+            .catch(err => {
             expect(err['message']).to.equal('Oops. Please retry from start');
         });
         done();
@@ -94,7 +96,7 @@ describe('Bug Creation Handler', () => {
         const collected = new Collection();
         collected.set(mockedMessageInstance.author.id, mockedMessageInstance);
         sinon.stub(mockedMessageInstance.channel, 'awaitMessages').returns(Promise.resolve(collected));
-        bug.awaitMessenger(filter, mockedMessageInstance, ['sd'], 1000, 4).then(res => {
+        feature.awaitMessenger(filter, mockedMessageInstance, ['sd'], timeoutDuration, iteration_end).then(res => {
             expect(res['done']).to.equal(true);
         });
         done();
@@ -105,8 +107,8 @@ describe('Bug Creation Handler', () => {
         mockedMessageInstance.content = 'Date picker';
         const collected = new Collection();
         collected.set(mockedMessageInstance.author.id, mockedMessageInstance);
-        sinon.stub(bug, 'awaitMessenger').returns(Promise.resolve({ 'collected': collected, done: true }));
-        bug.initaiteCollector(filter, mockedMessageInstance, ['sd'], 1000, 1).then(res => {
+        sinon.stub(feature, 'awaitMessenger').returns(Promise.resolve({ 'collected': collected, done: true }));
+        feature.initaiteCollector(filter, mockedMessageInstance, ['sd'], timeoutDuration, iteration_start).then(res => {
             expect(res['title']).to.equal('Date picker');
         });
         done();
@@ -117,8 +119,8 @@ describe('Bug Creation Handler', () => {
         mockedMessageInstance.content = 'Date picker';
         const collected = new Collection();
         collected.set(mockedMessageInstance.author.id, mockedMessageInstance);
-        sinon.stub(bug, 'awaitMessenger').returns(Promise.reject('Failed'));
-        bug.initaiteCollector(filter, mockedMessageInstance, ['sd'], 1000, 1).then(res => {
+        sinon.stub(feature, 'awaitMessenger').returns(Promise.reject('Failed'));
+        feature.initaiteCollector(filter, mockedMessageInstance, ['sd'], timeoutDuration, iteration_start).then(res => {
             expect(res['message']).to.equal('Failed');
         });
         done();
@@ -129,10 +131,11 @@ describe('Bug Creation Handler', () => {
         mockedMessageInstance.content = 'Date picker';
         const collected = new Collection();
         collected.set(mockedMessageInstance.author.id, mockedMessageInstance);
-        sinon.stub(bug, 'awaitMessenger')
+        sinon.stub(feature, 'awaitMessenger')
             .onFirstCall().returns(Promise.resolve({ 'collected': collected }))
             .onSecondCall().returns(Promise.resolve({ 'collected': collected, done: true }));
-        bug.initaiteCollector(filter, mockedMessageInstance, ['sd'], 1000, 1).then(res => {
+            feature.initaiteCollector(filter, mockedMessageInstance, ['sd'], timeoutDuration , iteration_start)
+            .then(res => {
             expect(res['title']).to.equal('Date picker');
         });
         done();
@@ -143,53 +146,50 @@ describe('Bug Creation Handler', () => {
         mockedMessageInstance.content = 'Bingo..!';
         const collected = new Collection();
         sinon.stub(mockedMessageInstance.channel, 'awaitMessages').returns(Promise.resolve(collected));
-        bug.awaitMessenger(filter, mockedMessageInstance, ['sd'], 1000, 4).catch(err => {
+        feature.awaitMessenger(filter, mockedMessageInstance, ['sd'], timeoutDuration, iteration_end).catch(err => {
             expect(err['message']).to.equal('Timeout , Please initaite from start');
         });
         done();
     });
 
-    it('Create JIRA Issue : Success', (done) => {
+    it('Create JIRA Feature : Success', (done) => {
         const bugObject = {
-            title: 'Date Picker',
-            description: 'Format Incorrect',
-            severity: 'High',
+            title: 'Login Page',
+            description: 'Login page with validations',
             confirm: 'Yes'
         };
-        sandbox.stub(bug['jiraApiHandler'], 'createIssue').resolves(mockResponse.issueSuccessObj);
-        sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
-        bug.execute(mockedMessageInstance).then(result => {
+        sandbox.stub(feature['jiraApiHandler'], 'createIssue').resolves(mockResponse.issueSuccessObj);
+        sinon.stub(feature, 'initaiteCollector').returns(Promise.resolve(bugObject));
+        feature.execute(mockedMessageInstance).then(result => {
             expect(result['confirm']).to.equal('Yes');
         });
         done();
     });
 
 
-    it('Create JIRA Issue : Failure', (done) => {
+    it('Create JIRA Feature : Failure', (done) => {
         const bugObject = {
-            title: 'Date Picker',
-            description: 'Format Incorrect',
-            severity: 'High',
+            title: 'Login Page',
+            description: 'Login page with validations',
             confirm: 'Yes'
         };
-        sandbox.stub(bug['jiraApiHandler'], 'createIssue').returns(Promise.reject());
-        sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
-        bug.execute(mockedMessageInstance).then(result => {
+        sandbox.stub(feature['jiraApiHandler'], 'createIssue').returns(Promise.reject());
+        sinon.stub(feature, 'initaiteCollector').returns(Promise.resolve(bugObject));
+        feature.execute(mockedMessageInstance).then(result => {
             expect(result['error']).to.equal(true);
         });
         done();
     });
 
 
-    it('Bug creation cancelled by user', (done) => {
+    it('Feature creation cancelled by user', (done) => {
         const bugObject = {
-            title: 'Date Picker',
-            description: 'Format Incorrect',
-            severity: 'High',
+            title: 'Login Page',
+            description: 'Login page with validations',
             confirm: 'No'
         };
-        sinon.stub(bug, 'initaiteCollector').returns(Promise.resolve(bugObject));
-        bug.execute(mockedMessageInstance).then(result => {
+        sinon.stub(feature, 'initaiteCollector').returns(Promise.resolve(bugObject));
+        feature.execute(mockedMessageInstance).then(result => {
             expect(result['confirm']).to.equal('No');
         });
         done();
